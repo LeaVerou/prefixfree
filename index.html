@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="utf-8">
+<title>Prefix free: Break free from CSS vendor prefix hell!</title>
+<link href="style.css" rel="stylesheet" />
+<style>
+	body {
+		transform:none; /* Just to test embedded styles */
+	}	
+</style>
+
+</head>
+<body>
+
+<hgroup>
+	<h1>prefix<strong>free</strong></h1>
+	<h2>Break free from CSS -prefix- hell!</h2>
+</hgroup>
+
+<a href="https://github.com/LeaVerou/prefixfree/blob/master/prefixfree.min.js" class="download" title="Click to download ->">Only <strong>5KB</strong> minified</a>
+<a href="https://github.com/LeaVerou/prefixfree" target="_blank"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
+
+<section id="wtf">
+	<strong>pre•fix•free</strong> <span class="phonetic">|ˈprēˌfiksfrē|</span> <i>n.</i> A script that lets you use only unprefixed CSS properties everywhere. 
+	It works behind the scenes, adding the current browser’s prefix to any CSS code, only when it’s needed.
+</section>
+
+<div class="section-container">
+<section id="features">
+	<h1>Features</h1>
+	<ul>
+		<li>Processes every stylesheet in <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements and adds a vendor prefix where needed</li>
+		<li>Processes elements with a <code>style</code> attribute and adds a vendor prefix where needed</li>
+		<li>Responds to new <code>&lt;link&gt;</code> and <code>&lt;style&gt;</code> added to the document afterwards</li>
+		<li>Responds to new elements with a <code>style</code> attribute added to the document afterwards</li>
+		<li>Responds to <code>style</code> attribute changes through <code>setAttribute()</code>
+		<li>Getting and setting unprefixed properties through the CSSOM works, like:
+			<pre>element.style.transform = 'rotate(10deg)';</pre>
+		</li>
+	</ul>
+</section>
+<section id="limitations">
+	<h1>Limitations</h1>
+	<ul>
+		<li>Prefixing code in <code>@import</code>-ed files is not supported</li>
+		<li>Prefixing <strong>cross-origin</strong> linked stylesheets is not supported</li>
+		<li>Unprefixed linked stylesheets won’t work <strong>locally</strong> in Chrome and Opera. You can change that though.</li>
+		<li>Unprefixed inline styles (in the <code>style</code> attribute) won’t work in IE and Firefox 3.6 and below.</li>
+		<li>
+			<em>Setting</em> unprefixed CSSOM properties, like:
+			<pre>element.style.transform = 'rotate(5deg)';</pre>
+		 	will not work in Chrome (<em>reading</em> will)
+		 </li>
+	</ul>
+</section>
+</div>
+
+<div class="section-container">
+<section id="demo">
+	<h1>Demo?</h1>
+	<p>Check <a href="style.css">this page’s stylesheet</a> ;-)</p>
+	<p><strong>BTW: This page is a bit slow, because I went crazy with the CSS3 in it, to demonstrate prefixfree. It’s not prefixfree making it slow.</strong></p>
+</section>
+
+<section id="howto">
+	<h1>How to use</h1>
+	<p>Just include <code>prefixfree.js</code> anywhere in your page. That’s it, you’re done!</p>
+</section>
+</div>
+
+<section id="browser-support">
+	<h1>Browser support</h1>
+	<p>The target browser support is <strong>IE9+</strong>, <strong>Opera 10+</strong>, <strong>Firefox 3.5+</strong>, <strong>Safari 4+</strong> and <strong>Chrome</strong>.</p>
+	<p>If it doesn’t work in any of those, it’s a bug so please report it. Just before you do, please make sure that it’s not because the browser doesn’t support a CSS3 feature at all, even with a prefix.</p>
+	<p>In older browsers like IE8, nothing will break, just properties won’t get prefixed. Which wouldn’t be useful anyway as IE8 doesn’t support much CSS3 ;)</p>
+</section>
+
+<section id="faq">
+	<h1>FAQ</h1>
+	
+	<section>
+		<h1>You're kinda destroying the whole idea behind vendor prefixes</h1>
+		<p>Not really. Properties that <strong>already</strong> have a prefix won’t be altered. So, if you want to specify different behavior for a certain engine just use already prefixed properties.</p>
+	</section>
+	
+	<section>
+		<h1>I want to use this on a complex website. What can I do to improve performance?</h1>
+		<p>Mutation events usually slow things down a bit, so if you're not planning on adding new stylesheets on the page or elements with a <code>style</code> attribute that needs to be processed, you can remove them with this code:</p>
+		<pre>document.removeEventListener('DOMNodeInserted', PrefixFree.events.DOMNodeInserted, false);
+document.removeEventListener('DOMAttrModified', PrefixFree.events.DOMAttrModified, false);</pre>
+		<p>Even in the odd case that you need to prefix CSS code after page load, you can always call <code>PrefixFree.prefixCSS(codeHere)</code>.
+	</section>
+	
+	<section id="local-xhr">
+		<h1>How do I enable local testing?</h1>
+		<p>Firefox (and IE?) natively support local XHR, so prefix<strong>free</strong> will work fine locally with them.</p>
+		<p>To enable local XHR for Chrome, you need to run it with the flag <code>--allow-file-access-from-files</code>. To enable local XHR for Opera, you have to [?].</p>
+	</section>
+	
+	<section>
+		<h1>Something like this belongs to the server-side</h1>
+		<p>A server side script would need to add all prefixes, making the size of the CSS file considerably larger. But every solution has its own pros and cons. If you would feel more comfortable with a server-side script, use that. Remember: nobody forced you to use this script. KTHXBAI ☺</p>
+	</section>
+</section>
+
+<section id="test-drive">
+	<h1>Test drive</h1>
+	<p>Test the prefixing that prefix<strong>free</strong> would do for this browser, by writing some CSS below:</p>
+	<textarea id="source">@keyframes rotate {
+    from { transform: rotate(15deg) }
+    to { transform: rotate(375deg) }	
+}
+
+.download {
+   position: absolute;
+   top: 1em;
+   left: -1.5em;
+   width: 6em;
+   height: 6em;
+   padding: 1em 0;
+   background: #80A060;
+   background-image: linear-gradient(transparent, rgba(10,0,0,.3));
+   color: white;
+   line-height: 1;
+   font-size: 140%;
+   text-align: center;
+   text-decoration: none;
+   text-shadow: .08em .08em .2em rgba(0,0,0,.6);
+   border-radius: 50%;
+   box-shadow: .1em .2em .4em -.2em black;
+   box-sizing: border-box;
+   transform: rotate(15deg);
+   animation: rotate;
+}</textarea>
+	<textarea id="prefixed" readonly></textarea>
+</section>
+
+<footer>
+	Made by <a href="http://leaverou.me/">Lea Verou</a> with care
+</footer>
+
+<script src="prefixfree.js"></script>
+<script>
+(function(){
+
+function $(id) { return document.getElementById(id) }
+
+if(window.PrefixFree) {
+	var source = $('source'),
+		prefixed = $('prefixed');
+		
+	(source.oninput = function() {
+		prefixed.value = PrefixFree.prefixCSS(source.value);
+	})();
+	
+	source.onscroll = function() {
+		prefixed.scrollTop = source.scrollTop;
+	}
+}
+		
+})();
+</script>
+
+<a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="LeaVerou">Tweet</a>
+<script src="http://platform.twitter.com/widgets.js"></script>
+
+<script src="http://www.google-analytics.com/ga.js"></script> 
+<script> 
+try {
+var pageTracker = _gat._getTracker("UA-597483-5");
+pageTracker._trackPageview();
+} catch(err) {}
+</script> 
+
+</body>
+</html>
