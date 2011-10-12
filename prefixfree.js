@@ -12,13 +12,6 @@ if(!window.getComputedStyle || !window.addEventListener) {
 	return;
 }
 
-if(!Object.defineProperty) {
-	Object.defineProperty = function(o, p, accessors) {
-		o.__defineGetter__(p, accessors.get);
-		o.__defineSetter__(p, accessors.set);
-	};
-}
-
 var self = window.PrefixFree = {
 	prefixCSS: function(css, raw) {
 		var regex, prefix = self.prefix;
@@ -358,22 +351,31 @@ document.addEventListener('DOMContentLoaded', function() {
 	if(window.CSSStyleDeclaration) {
 		for(var i=0; i<self.properties.length; i++) {
 			var property = camelCase(self.properties[i]),
-			    prefixed = camelCase(self.prefix + property);
+			    prefixed = camelCase(self.prefix + property),
+			    proto = CSSStyleDeclaration.prototype,
+			    getter = (function(prefixed) {
+			    	return function() {
+			    		return this[prefixed];
+			    	}
+			    })(prefixed),
+			    setter = (function(prefixed) {
+			    	return function(value) {
+			    		this[prefixed] = value;
+			    	}
+			    })(prefixed);
 	
-			Object.defineProperty(CSSStyleDeclaration.prototype, property, {
-				get: (function(prefixed) {
-					return function() {
-						return this[prefixed];
-					}
-				})(prefixed),
-				set: (function(prefixed) {
-					return function(value) {
-						this[prefixed] = value;
-					}
-				})(prefixed),
-				enumerable: true,
-				configurable: true
-			});
+			if(Object.defineProperty) {
+				Object.defineProperty(proto, property, {
+					get: getter,
+					set: setter,
+					enumerable: true,
+					configurable: true
+				});
+			}
+			else if(proto.__defineGetter__) {
+				proto.__defineGetter__(property, getter);
+				proto.__defineSetter__(property, setter);
+			}
 		}
 	}
 }, false);
