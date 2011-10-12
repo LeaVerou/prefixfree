@@ -46,7 +46,7 @@
 	<ul>
 		<li>Prefixing code in <code>@import</code>-ed files is not supported</li>
 		<li>Prefixing <strong>cross-origin</strong> linked stylesheets is not supported</li>
-		<li>Unprefixed linked stylesheets won’t work <strong>locally</strong> in Chrome and Opera. You can change that though.</li>
+		<li>Unprefixed linked stylesheets won’t work <strong>locally</strong> in Chrome and Opera. <a href="#local-xhr">You can change that for yourself</a> though.</li>
 		<li>Unprefixed inline styles (in the <code>style</code> attribute) won’t work in IE and Firefox 3.6 and below.</li>
 		<li>
 			<em>Setting</em> unprefixed CSSOM properties, like:
@@ -96,7 +96,8 @@ document.removeEventListener('DOMAttrModified', PrefixFree.events.DOMAttrModifie
 	<section id="local-xhr">
 		<h1>How do I enable local testing?</h1>
 		<p>Firefox (and IE?) natively support local XHR, so prefix<strong>free</strong> will work fine locally with them.</p>
-		<p>To enable local XHR for Chrome, you need to run it with the flag <code>--allow-file-access-from-files</code>. To enable local XHR for Opera, you have to [?].</p>
+		<p>To enable local XHR for Chrome, you need to run it with the flag <code>--allow-file-access-from-files</code>.</p>
+		<p>To enable local XHR for Opera, you have to go to <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>, check that option and Save.</p>
 	</section>
 	
 	<section>
