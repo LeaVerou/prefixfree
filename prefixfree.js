@@ -312,7 +312,7 @@ for (var val in values) {
 	}
 	
 	for(var atrule in atrules) {
-		var rule = atrule + ' ' + (atrules[atrule] || '') + '{}';
+		rule = atrule + ' ' + (atrules[atrule] || '') + '{}';
 		
 		style.textContent = '@' + rule;
 		
