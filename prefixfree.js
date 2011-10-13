@@ -55,6 +55,7 @@ var self = window.PrefixFree = {
 			}
 			
 			var url = link.getAttribute('href') || link.getAttribute('data-href'),
+			    base = url.replace(/[^\/]+$/, ''),
 			    parent = link.parentNode,
 			    xhr = new XMLHttpRequest();
 			
@@ -66,6 +67,16 @@ var self = window.PrefixFree = {
 					
 					if(css) {
 						css = self.prefixCSS(css, true);
+						
+						// Convert relative URLs to absolute
+						css = css.replace(/url\((?:'|")?(.+?)(?:'|")?\)/gi, function($0, url) {
+							if(!/^\w+:\/\//i.test(url)) { // If url not absolute
+								// May contain sequences like /../ and /./ but those DO work
+								return 'url("' + base + url + '")';
+							}
+							
+							return $0;						
+						});
 						
 						var style = document.createElement('style');
 						style.textContent = css;
