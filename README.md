@@ -1,5 +1,7 @@
-# -prefix-**free**
+# [-prefix-**free**](http://leaverou.github.com/prefixfree/)
 ## Break free from CSS prefix hell!
+
+[Project homepage](http://leaverou.github.com/prefixfree/)
 
 A script that lets you use only unprefixed CSS properties everywhere. 
 It works behind the scenes, adding the current browser’s prefix to any CSS code, only when it’s needed.
