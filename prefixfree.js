@@ -1,5 +1,5 @@
 /**
- * PrefixFree 1.0.2
+ * PrefixFree 1.0.3
  * @author Lea Verou
  * MIT license
  */
