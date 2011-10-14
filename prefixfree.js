@@ -21,9 +21,18 @@ var self = window.PrefixFree = {
 		}
 		
 		if (self.properties.length) {
-			regex = RegExp('\\b(' + self.properties.join('|') + ')\\b', 'gi');
+			regex = RegExp('\\b(' + self.properties.join('|') + '):', 'gi');
 			
-			css = css.replace(regex, prefix + "$1");
+			css = css.replace(regex, prefix + "$1:");
+			
+			// Prefix properties *inside* values (issue #8)
+			regex = RegExp('\\b(' + self.valueProperties.join('|') + '):(.*?);', 'gi');
+			
+			var vpRegex = regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
+			
+			css = css.replace(regex, function($0) {
+				return $0.replace(vpRegex, prefix + "$1")
+			});
 		}
 		
 		if(raw) {
@@ -61,16 +70,13 @@ var self = window.PrefixFree = {
 
 			xhr.onreadystatechange = function() {
 				if(xhr.readyState === 4) {
-					var css = xhr.responseText, prefix = RegExp(self.prefix, 'g');
+					var css = xhr.responseText;
 					
 					if(css) {
 						css = self.prefixCSS(css, true);
 						
 						// Convert relative URLs to absolute
 						css = css.replace(/url\((?:'|")?(.+?)(?:'|")?\)/gi, function($0, url) {
-							// Remove accidental prefixing
-							url = url.replace(prefix, '')
-							
 							if(!/^[a-z]{3,10}:/i.test(url)) { // If url not absolute
 								// May contain sequences like /../ and /./ but those DO work
 								return 'url("' + base + url + '")';
@@ -325,6 +331,12 @@ for (var val in values) {
 	
 	head.removeChild(style);
 })();
+
+// Properties that accept properties as their value
+self.valueProperties = [
+	'transition',
+	'transition-property'
+]
 
 /**************************************
  * Process styles
