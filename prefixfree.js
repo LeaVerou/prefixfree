@@ -11,17 +11,6 @@ if(!window.getComputedStyle || !window.addEventListener) {
 }
 
 var self = window.PrefixFree = {
-	init: function() {
-		// Linked stylesheets
-		$('link[rel~="stylesheet"]').forEach(self.process.link);
-		
-		// Inline stylesheets
-		$('style').forEach(self.process.styleElement);
-		
-		// Inline styles
-		$('[style]').forEach(self.process.styleAttribute);
-	},
-	
 	prefixCSS: function(css, raw) {
 		var regex, prefix = self.prefix;
 		
@@ -340,8 +329,18 @@ for (var val in values) {
 /**************************************
  * Process styles
  **************************************/
-self.init();
-document.addEventListener('DOMContentLoaded', self.init, false);
+$('link[rel~="stylesheet"]').forEach(self.process.link);
+
+document.addEventListener('DOMContentLoaded', function() {
+	// Linked stylesheets
+	$('link[rel~="stylesheet"]').forEach(self.process.link);
+	
+	// Inline stylesheets
+	$('style').forEach(self.process.styleElement);
+	
+	// Inline styles
+	$('[style]').forEach(self.process.styleAttribute);
+}, false);
 
 
 /**************************************
