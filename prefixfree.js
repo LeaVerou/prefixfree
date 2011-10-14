@@ -104,7 +104,7 @@ var self = window.PrefixFree = {
 		},
 	
 		styleElement: function(style) {
-			style.textContent = self.prefixCSS(style.textContent);
+			style.textContent = self.prefixCSS(style.textContent, true);
 		},
 	
 		styleAttribute: function(element) {
