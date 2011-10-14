@@ -68,7 +68,7 @@ var self = window.PrefixFree = {
 						
 						// Convert relative URLs to absolute
 						css = css.replace(/url\((?:'|")?(.+?)(?:'|")?\)/gi, function($0, url) {
-							if(!/^\w+:\/\//i.test(url)) { // If url not absolute
+							if(!/^[a-z]{3,10}:/i.test(url)) { // If url not absolute
 								// May contain sequences like /../ and /./ but those DO work
 								return 'url("' + base + url + '")';
 							}
