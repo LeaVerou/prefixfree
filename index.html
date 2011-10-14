@@ -19,7 +19,7 @@
 	<h2>Break free from CSS -prefix- hell!</h2>
 </hgroup>
 
-<a href="https://raw.github.com/LeaVerou/prefixfree/master/prefixfree.min.js" class="download" title="Click to download ->">Only <strong>5KB</strong> minified</a>
+<a href="https://raw.github.com/LeaVerou/prefixfree/master/prefixfree.min.js" class="download" title="Click to download ->">Only <strong>4KB</strong> minified</a>
 <a href="https://github.com/LeaVerou/prefixfree" target="_blank"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
 
 <section id="wtf">
@@ -30,29 +30,20 @@
 <div class="section-container">
 <section id="features">
 	<h1>Features</h1>
-	<ul>
+	<ul class="features">
 		<li>Processes every stylesheet in <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements and adds a vendor prefix where needed</li>
 		<li>Processes elements with a <code>style</code> attribute and adds a vendor prefix where needed</li>
-		<li>Responds to new <code>&lt;link&gt;</code> and <code>&lt;style&gt;</code> added to the document afterwards</li>
-		<li>Responds to new elements with a <code>style</code> attribute added to the document afterwards</li>
-		<li>Responds to <code>style</code> attribute changes through <code>setAttribute()</code>
-		<li>Getting and setting unprefixed properties through the CSSOM works, like:
-			<pre>element.style.transform = 'rotate(10deg)';</pre>
-		</li>
+		<li>Takes care of new <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements, <code>style</code> attribute changes and CSSOM changes (<a href="#dynamic-dom">requires plugin</a>)</li>
+		<li>Lets jQuery’s <code>.css()</code> method to get and set unprefixed properties (<a href="#jquery">requires plugin</a>)</li>
 	</ul>
 </section>
 <section id="limitations">
 	<h1>Limitations</h1>
-	<ul>
+	<ul class="drawbacks">
 		<li>Prefixing code in <code>@import</code>-ed files is not supported</li>
 		<li>Prefixing <strong>cross-origin</strong> linked stylesheets is not supported</li>
 		<li>Unprefixed linked stylesheets won’t work <strong>locally</strong> in Chrome and Opera. <a href="#local-xhr">You can change that for yourself</a> though.</li>
 		<li>Unprefixed inline styles (in the <code>style</code> attribute) won’t work in IE and Firefox 3.6 and below.</li>
-		<li>
-			<em>Setting</em> unprefixed CSSOM properties, like:
-			<pre>element.style.transform = 'rotate(5deg)';</pre>
-		 	will not work in Chrome (<em>reading</em> will)
-		 </li>
 	</ul>
 </section>
 </div>
@@ -77,41 +68,9 @@
 	<p>In older browsers like IE8, nothing will break, just properties won’t get prefixed. Which wouldn’t be useful anyway as IE8 doesn’t support much CSS3 ;)</p>
 </section>
 
-<section id="faq">
-	<h1>FAQ</h1>
-	
-	<section>
-		<h1>You're kinda destroying the whole idea behind vendor prefixes</h1>
-		<p>Not really. Properties that <strong>already</strong> have a prefix won’t be altered. So, if you want to specify different behavior for a certain engine just use already prefixed properties.</p>
-	</section>
-	
-	<section>
-		<h1>I want to use this on a complex website. What can I do to improve performance?</h1>
-		<p>Mutation events usually slow things down a bit, so if you're not planning on adding new stylesheets on the page or elements with a <code>style</code> attribute that needs to be processed, you can remove them with this code:</p>
-		<pre>document.removeEventListener('DOMNodeInserted', PrefixFree.events.DOMNodeInserted, false);
-document.removeEventListener('DOMAttrModified', PrefixFree.events.DOMAttrModified, false);</pre>
-		<p>Even in the odd case that you need to prefix CSS code after page load, you can always call <code>PrefixFree.prefixCSS(codeHere)</code>.
-	</section>
-	
-	<section id="local-xhr">
-		<h1>How do I enable local testing?</h1>
-		<p>Firefox (and IE?) natively support local XHR, so prefix<strong>free</strong> will work fine locally with them.</p>
-		<p>To enable local XHR for Chrome, you need to run it with the flag <code>--allow-file-access-from-files</code>.</p>
-		<p>To enable local XHR for Opera, you have to go to <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>, check that option and Save.</p>
-	</section>
-	
-	<section>
-		<h1>Something like this belongs to the server-side</h1>
-		<p>A server side script would need to add all prefixes, making the size of the CSS file considerably larger. Also, it should maintain a list of features that need prefixes, or add them all and unnecessarily bloat the stylesheet. Prefixfree automatically detects what needs a prefix and what doesn’t.</p>
-		<p>Also, a common argument against doing this on the client side, is that it makes the design rely on JavaScript. However, that is completely false: If JS is disabled, only some of the CSS3 won’t show. But if your design <em>relies</em> on CSS3 to be functional, you have bigger problems bro.</p>
-		
-		<p>But every solution has its own pros and cons. If you would feel more comfortable with a server-side script, use that. Remember: nobody forced you to use this script. KTHXBAI ☺</p>
-	</section>
-</section>
-
 <section id="test-drive">
 	<h1>Test drive</h1>
-	<p>Test the prefixing that prefix<strong>free</strong> would do for this browser, by writing some CSS below:</p>
+	<p>Test the prefixing that PrefixFree would do for this browser, by writing some CSS below:</p>
 	<textarea id="source">@keyframes rotate {
     from { transform: rotate(15deg) }
     to { transform: rotate(375deg) }	
@@ -141,11 +100,79 @@ document.removeEventListener('DOMAttrModified', PrefixFree.events.DOMAttrModifie
 	<textarea id="prefixed" readonly></textarea>
 </section>
 
+
+<section id="faq">
+	<h1>FAQ</h1>
+	
+	<section>
+		<h1>You're kinda destroying the whole idea behind vendor prefixes</h1>
+		<p>Not really. Properties that <strong>already</strong> have a prefix won’t be altered. So, if you want to specify different behavior for a certain engine just use already prefixed properties.</p>
+	</section>
+	
+	<section id="local-xhr">
+		<h1>How do I enable local testing?</h1>
+		<p>Firefox (and IE?) natively support local XHR, so PrefixFree will work fine locally with them.</p>
+		<p>To enable local XHR for Chrome, you need to run it with the flag <code>--allow-file-access-from-files</code>.</p>
+		<p>To enable local XHR for Opera, you have to go to <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>, check that option and Save.</p>
+	</section>
+	
+	<section>
+		<h1>Something like this belongs to the server-side</h1>
+		<p>A server side script would need to add all prefixes, making the size of the CSS file considerably larger. Also, it should maintain a list of features that need prefixes, or add them all and unnecessarily bloat the stylesheet. Prefixfree automatically detects what needs a prefix and what doesn’t.</p>
+		<p>Also, a common argument against doing this on the client side, is that it makes the design rely on JavaScript. However, that is completely false: If JS is disabled, only some of the CSS3 won’t show. But if your design <em>relies</em> on CSS3 to be functional, you have bigger problems bro.</p>
+		
+		<p>But every solution has its own pros and cons. If you would feel more comfortable with a server-side script, use that. Remember: nobody forced you to use PrefixFree. KTHXBAI ☺</p>
+	</section>
+</section>
+
+<section id="plugins">
+	<h1>Plugins</h1>
+	<p>Extra code on top of PrefixFree that makes it more flexible, integrates it with different APIs etc</p>
+	
+	<section id="dynamic-dom">
+		<h1>Dynamic DOM plugin</h1>
+		<p>Originally a part of PrefixFree, it’s now a separate plugin. It makes PrefixFree take care of:</p>
+		<ul class="features">
+			<li>New <code>&lt;link&gt;</code> and <code>&lt;style&gt;</code> added to the document afterwards</li>
+			<li>New elements with a <code>style</code> attribute added to the document afterwards</li>
+			<li><code>style</code> attribute changes through <code>setAttribute()</code> (except in Webkit)</li>
+			<li>Getting and setting unprefixed properties through the CSSOM, like:
+				<pre>element.style.transform = 'rotate(10deg)';</pre>
+			</li>
+		</ul>
+		Things to be aware of:
+		<ul class="drawbacks">
+			<li>Mutation events have a reputation of being slow, and they are the only way to do stuff when an attribute changes or new elements get added</li>
+			<li><code>style</code> attribute modifications will not work in Webkit</li>
+			<li>
+				<em>Setting</em> unprefixed CSSOM properties, like:
+				<pre>element.style.transform = 'rotate(5deg)';</pre>
+			 	will not work in Chrome (<em>reading</em> will)
+			 </li>
+		</ul>
+		<p>Get it now:</p>
+		<ul>
+			<li><a href="https://raw.github.com/LeaVerou/prefixfree/master/plugins/prefixfree.dynamic-dom.js">prefixfree.dynamic-dom.js</a></li>
+			<li><a href="https://raw.github.com/LeaVerou/prefixfree/master/plugins/prefixfree.dynamic-dom.js">prefixfree.dynamic-dom.min.js</a></li>
+		</ul>
+	</section>
+	
+	<section id="jquery">
+		<h1>jQuery plugin</h1>
+		<p>A tiny plugin (I didn’t even bother minifying it as it’s so small) that lets you set/get unprefixed CSS properties through jQuery's <code>.css</code> method.</p>
+		<p>Get it now:</p>
+		<ul>
+			<li><a href="https://raw.github.com/LeaVerou/prefixfree/master/plugins/prefixfree.jquery.js">prefixfree.jquery.js</a></li>
+		</ul>
+	</section>
+</section>
+
 <footer>
 	Made by <a href="http://leaverou.me/">Lea Verou</a> with care
 </footer>
 
 <script src="prefixfree.js"></script>
+
 <script>
 (function(){
 

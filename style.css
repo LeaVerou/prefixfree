@@ -99,6 +99,37 @@ hgroup {
 	hgroup > h2 {
 		font-size: 180%;
 	}
+	
+ul {
+	list-style: none;
+	padding-left: 1.9em;
+	margin: 1em 0;
+}
+
+	ul > li:before {
+		content: '+';
+		background: #79a;
+		float: left;
+		clear:left;
+		padding: .1em .5em;
+		margin-left: -2.3em;
+		color: white;
+		font-size: 80%;
+		text-align: center;
+		border-radius: 50%;
+		text-shadow: 0 -1px rgba(0,0,0,.5);
+		box-shadow: 0 1px white;
+	}
+	
+	ul.features > li:before {
+		content: '✚';
+		background: #6c0;
+	}
+	
+	ul.drawbacks > li:before {
+		content: '✖';
+		background: #c00;
+	}
 
 .section-container {
 	overflow: hidden;
@@ -135,11 +166,13 @@ section#howto {
 }
 
 	section > h1 {
+		margin-top: .5em;
 		font-size: 300%;
 		line-height: 1;
 	}
 		
 		section > section > h1 {
+			margin-top: 1.5em;
 			color: #80A060;
 			font: bold 120% sans-serif;
 			animation: none;
@@ -151,35 +184,6 @@ section#howto {
 		
 		section#faq > section > h1:after {
 			content: close-quote;
-		}
-	
-	section > ul {
-		list-style: none;
-		padding-left: 1.9em;
-		margin: 1em 0;
-	}
-	
-		section > ul > li:before {
-			float: left;
-			clear:left;
-			padding: .1em .5em;
-			margin-left: -2.3em;
-			color: white;
-			font-size: 80%;
-			text-align: center;
-			border-radius: 50%;
-			text-shadow: 0 -1px rgba(0,0,0,.5);
-			box-shadow: 0 1px white;
-		}
-		
-		section#features > ul > li:before {
-			content: '✚';
-			background: #6c0;
-		}
-		
-		section#limitations > ul > li:before {
-			content: '✖';
-			background: #c00;
 		}
 	
 	section#test-drive > textarea {

@@ -1,12 +1,10 @@
 /**
- * Prefixfree: Break free from CSS vendor prefixes!
+ * PrefixFree 1.0.1
  * @author Lea Verou
  * MIT license
  */
 
 (function(head){
-
-function $$(expr, con) { return [].slice.call((con || document).querySelectorAll(expr)); }
 
 if(!window.getComputedStyle || !window.addEventListener) {
 	return;
@@ -103,41 +101,27 @@ var self = window.PrefixFree = {
 			
 			css = self.prefixCSS(css);
 			
-			// We don't need the event to fire twice
-			document.removeEventListener('DOMAttrModified', self.events.DOMAttrModified, false);
 			element.setAttribute('style', css);
-			document.addEventListener('DOMAttrModified', self.events.DOMAttrModified, false);
 		}
 	},
 	
+	// Warning: prefixXXX functions prefix no matter what, even if the XXX is supported prefix-less
 	prefixSelector: function(selector) {
 		return selector.replace(/^:{1,2}/, function($0) { return $0 + self.prefix })
 	},
 	
-	events: {
-		DOMNodeInserted: function(evt) {
-			var node = evt.target, tag = node.nodeName;
-			
-			if(node.nodeType != 1) {
-				return;
-			}
-			
-			if(/link/i.test(tag)) {
-				self.process.link(node);
-			}
-			else if(/style/i.test(tag)) {
-				self.process.styleElement(node);
-			}
-			else if (node.hasAttribute('style')) {
-				self.process.styleAttribute(node);
-			}
-		},
+	prefixProperty: function(property, camelCase) {
+		var prefixed = self.prefix + property;
 		
-		DOMAttrModified: function(evt) {
-			if(evt.attrName === 'style') {
-				self.process.styleAttribute(evt.target);
-			}
-		}
+		return camelCase? self.camelCase(prefixed) : prefixed;
+	},
+	
+	camelCase: function(str) {
+		return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
+	},
+	
+	deCamelCase: function(str) {
+		return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
 	}
 };
 
@@ -175,7 +159,7 @@ var self = window.PrefixFree = {
 					parts.pop();
 					
 					var shorthand = parts.join('-'),
-					    shorthandDOM = camelCase(shorthand);
+					    shorthandDOM = self.camelCase(shorthand);
 
 					if(shorthandDOM in dummy) {
 						pushUnique(properties, shorthand);
@@ -193,12 +177,12 @@ var self = window.PrefixFree = {
 	}
 	else {
 		for(var property in style) {
-			iterate(deCamelCase(property));
+			iterate(self.deCamelCase(property));
 		}
 	}
 	
 	self.prefix = '-' + self.prefix.prefix + '-';
-	self.Prefix = camelCase(self.prefix);
+	self.Prefix = self.camelCase(self.prefix);
 	
 	properties.sort();
 	
@@ -344,68 +328,28 @@ for (var val in values) {
  **************************************/
 document.addEventListener('DOMContentLoaded', function() {
 	// Linked stylesheets
-	$$('link[rel~="stylesheet"]').forEach(self.process.link);
+	$('link[rel~="stylesheet"]').forEach(self.process.link);
 	
 	// Inline stylesheets
-	$$('style').forEach(self.process.styleElement);
+	$('style').forEach(self.process.styleElement);
 	
 	// Inline styles
-	$$('[style]').forEach(self.process.styleAttribute);
-	
-	// Listen for new <link> and <style> elements
-	document.addEventListener('DOMNodeInserted', self.events.DOMNodeInserted, false);
-	
-	// Listen for style attribute changes
-	document.addEventListener('DOMAttrModified', self.events.DOMAttrModified, false);
-	
-	// Add accessors for CSSOM property changes
-	if(window.CSSStyleDeclaration) {
-		for(var i=0; i<self.properties.length; i++) {
-			var property = camelCase(self.properties[i]),
-			    prefixed = camelCase(self.prefix + property),
-			    proto = CSSStyleDeclaration.prototype,
-			    getter = (function(prefixed) {
-			    	return function() {
-			    		return this[prefixed];
-			    	}
-			    })(prefixed),
-			    setter = (function(prefixed) {
-			    	return function(value) {
-			    		this[prefixed] = value;
-			    	}
-			    })(prefixed);
-	
-			if(Object.defineProperty) {
-				Object.defineProperty(proto, property, {
-					get: getter,
-					set: setter,
-					enumerable: true,
-					configurable: true
-				});
-			}
-			else if(proto.__defineGetter__) {
-				proto.__defineGetter__(property, getter);
-				proto.__defineSetter__(property, setter);
-			}
-		}
-	}
+	$('[style]').forEach(self.process.styleAttribute);
 }, false);
+
 
 /**************************************
  * Utilities
  **************************************/
-function camelCase(str) {
-	return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
-}
-
-function deCamelCase(str) {
-	return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
-}
 
 function pushUnique(arr, val) {
 	if(arr.indexOf(val) === -1) {
 		arr.push(val);
 	}
+}
+
+function $(expr, con) {
+	return [].slice.call((con || document).querySelectorAll(expr));
 }
 
 })(document.head || document.getElementsByTagName('head')[0]);
