@@ -1,5 +1,5 @@
 /**
- * PrefixFree 1.0.1
+ * PrefixFree 1.0.2
  * @author Lea Verou
  * MIT license
  */
@@ -11,6 +11,17 @@ if(!window.getComputedStyle || !window.addEventListener) {
 }
 
 var self = window.PrefixFree = {
+	init: function() {
+		// Linked stylesheets
+		$('link[rel~="stylesheet"]').forEach(self.process.link);
+		
+		// Inline stylesheets
+		$('style').forEach(self.process.styleElement);
+		
+		// Inline styles
+		$('[style]').forEach(self.process.styleAttribute);
+	},
+	
 	prefixCSS: function(css, raw) {
 		var regex, prefix = self.prefix;
 		
@@ -326,16 +337,8 @@ for (var val in values) {
 /**************************************
  * Process styles
  **************************************/
-document.addEventListener('DOMContentLoaded', function() {
-	// Linked stylesheets
-	$('link[rel~="stylesheet"]').forEach(self.process.link);
-	
-	// Inline stylesheets
-	$('style').forEach(self.process.styleElement);
-	
-	// Inline styles
-	$('[style]').forEach(self.process.styleAttribute);
-}, false);
+self.init();
+document.addEventListener('DOMContentLoaded', self.init, false);
 
 
 /**************************************
