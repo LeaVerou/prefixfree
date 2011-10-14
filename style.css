@@ -235,7 +235,7 @@ footer {
 
 .download:hover {
 	transform: rotate(375deg);
-	transition: 1s;
+	transition: 1s transform;
 }
 
 	.download > strong {
