@@ -139,12 +139,11 @@ var self = window.PrefixFree = {
  **************************************/
 (function() {
 	var prefixes = {},
+		highest = { prefix: '', uses: 0},
 		properties = [],
 		shorthands = {},
 		style = getComputedStyle(document.documentElement, null),
 		dummy = document.createElement('div').style;
-		
-	self.prefix = { prefix: '', uses: 0};
 	
 	// Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
 	var iterate = function(property) {
@@ -159,8 +158,8 @@ var self = window.PrefixFree = {
 				
 				prefixes[prefix] = uses;
 				
-				if(self.prefix.uses < uses) {
-					self.prefix = {prefix: prefix, uses: uses};
+				if(highest.uses < uses) {
+					highest = {prefix: prefix, uses: uses};
 				}
 				
 				// This helps determining shorthands
@@ -190,7 +189,7 @@ var self = window.PrefixFree = {
 		}
 	}
 	
-	self.prefix = '-' + self.prefix.prefix + '-';
+	self.prefix = '-' + highest.prefix + '-';
 	self.Prefix = self.camelCase(self.prefix);
 	
 	properties.sort();
@@ -241,6 +240,10 @@ var values = {
 	},
 	'initial': {
 		property: 'color'
+	},
+	'element': {
+		property: 'backgroundImage',
+		params: '#foo'
 	}
 };
 
