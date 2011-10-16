@@ -26,10 +26,10 @@ var self = window.PrefixFree = {
 			css = css.replace(regex, prefix + "$1:");
 			
 			// Prefix properties *inside* values (issue #8)
-			regex = RegExp('\\b(' + self.valueProperties.join('|') + '):(.*?);', 'gi');
+			regex = RegExp('\\b(' + self.valueProperties.join('|') + '):(.+?);\s*$', 'gim');
 			
-			var vpRegex = regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
-			
+			var vpRegex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
+
 			css = css.replace(regex, function($0) {
 				return $0.replace(vpRegex, prefix + "$1")
 			});
