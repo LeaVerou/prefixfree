@@ -4,7 +4,7 @@
  * MIT license
  */
 
-(function(head){
+(function(root){
 
 if(!window.getComputedStyle || !window.addEventListener) {
 	return;
@@ -304,7 +304,7 @@ for (var val in values) {
 	self.selectors = [];
 	self.atrules = [];
 	
-	var style = head.appendChild(document.createElement('style'));
+	var style = root.appendChild(document.createElement('style'));
 	
 	for(var selector in selectors) {
 		var rule = selectors[selector]? '(' + selectors[selector] + '){}' : '{}',
@@ -332,7 +332,7 @@ for (var val in values) {
 		}
 	}
 	
-	head.removeChild(style);
+	root.removeChild(style);
 })();
 
 // Properties that accept properties as their value
@@ -372,4 +372,4 @@ function $(expr, con) {
 	return [].slice.call((con || document).querySelectorAll(expr));
 }
 
-})(document.head || document.getElementsByTagName('head')[0]);
+})(document.documentElement);
