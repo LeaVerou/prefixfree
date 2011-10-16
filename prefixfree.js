@@ -236,7 +236,7 @@ var values = {
 	},
 	'calc': {
 		property: 'width',
-		params: '1px+5%'
+		params: '1px + 5%'
 	},
 	'initial': {
 		property: 'color'
