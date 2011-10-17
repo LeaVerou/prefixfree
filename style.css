@@ -233,6 +233,22 @@ section {
 	text-align: justify;
 }
 
+.github-ribbon img {
+	position: fixed; 
+	top: 0; right: 0; 
+	z-index: 2;
+	border: 0;
+}
+
+blockquote {
+	position: fixed;
+	bottom: 10px;
+	right: 10px;
+	width: 210px;
+	text-align: right;
+	font-size: 110%;
+}
+
 section#features,
 section#limitations,
 section#demo,
