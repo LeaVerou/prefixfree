@@ -55,8 +55,8 @@ ul.drawbacks > li:before {
 
 html {
 	background-color: slategray;
-	background-image: repeating-linear-gradient(30deg, rgba(255,255,255,.15), rgba(255,255,255,.15) 40px, transparent 40px, transparent 80px),
-		linear-gradient(0deg, transparent 50%, white 50%);
+	background-image: linear-gradient(0deg, transparent 50%, white 50%),
+		repeating-linear-gradient(30deg, rgba(255,255,255,.15), rgba(255,255,255,.15) 40px, transparent 40px, transparent 80px);
 }
 
 body {
