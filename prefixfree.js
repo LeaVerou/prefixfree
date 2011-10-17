@@ -1,5 +1,5 @@
 /**
- * PrefixFree 1.0.3
+ * PrefixFree 1.0.4
  * @author Lea Verou
  * MIT license
  */
@@ -346,6 +346,9 @@ self.valueProperties = [
  * Process styles
  **************************************/
 $('link[rel~="stylesheet"]').forEach(self.process.link);
+
+// Add class for current prefix
+root.className += ' ' + self.prefix;
 
 document.addEventListener('DOMContentLoaded', function() {
 	// Linked stylesheets

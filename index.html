@@ -116,8 +116,17 @@
 	<h1>FAQ</h1>
 	
 	<section>
-		<h1>You're destroying the whole idea behind vendor prefixes</h1>
-		<p>Not really. Properties that <strong>already</strong> have a prefix won’t be altered. So, if you want to specify different behavior for a certain engine just use already prefixed properties.</p>
+		<h1>What if I actually want to target only a specific prefix?</h1>
+		<p>Properties/values etc that <strong>already</strong> have a prefix won’t be altered. However, if you use the unprefixed property/value etc after the prefixed properties, you might run into <a href="https://github.com/LeaVerou/prefixfree/issues/16#issuecomment-2428237" target="_blank">issue #16</a>.
+		For those cases, -prefix-free adds a class on the root element (the <code>&lt;html&gt;</code> element in HTML) with the same name as the current prefix. So for example, to solve the problem presented in the above issue, you could do:</p>
+		<pre>.myselector {
+    transform: rotate(15deg);
+}
+.-webkit- .myselector {
+    transform: rotate(15deg) rotateX(0);
+}</pre>
+		<p>It’t not ideal, but it’s a solution, until a more intuitive way to deal with these cases is added in -prefix-free.</p>
+		<p>Please note that in unsupported browsers like IE8, no such class will be added.</p>
 	</section>
 	
 	<section id="local-xhr">
