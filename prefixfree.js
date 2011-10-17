@@ -17,21 +17,24 @@ var self = window.PrefixFree = {
 		function fix(what, replacement, after, before) {
 			what = self[what];
 			
-			before = before || '';
-			after = after || '';
+			var rb = before != undefined? before : '',
+				ra = after != undefined? after : '';
 			
-			replacement = replacement || before + prefix + '$1' + after;
+			replacement = replacement || rb + prefix + '$1' + ra;
+			
+			rb = before != undefined? before : '\\b';
+			ra = after != undefined? after : '\\b';
 			
 			if(what.length) {
-				var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
+				var regex = RegExp(rb + '(' + what.join('|') + ')' + ra, 'gi');
 				
 				css = css.replace(regex, replacement);
 			}
 		}
 		
-		fix('functions', prefix + "$1(", '\\s*\\(', '\\b');
-		fix('keywords', null, '\\b', '\\b');
-		fix('properties', prefix + '$1:', '\\s*:', '\\b');
+		fix('functions', prefix + "$1(", '\\s*\\(');
+		fix('keywords', null);
+		fix('properties', prefix + '$1:', '\\s*:');
 		
 		// Prefix properties *inside* values (issue #8)
 		if (self.properties.length) {
@@ -43,8 +46,8 @@ var self = window.PrefixFree = {
 		}
 		
 		if(raw) {
-			fix('selectors', self.prefixSelector, '\\b');
-			fix('atrules', null, '\\b', '@');
+			fix('selectors', self.prefixSelector, '\\b', '');
+			fix('atrules', null, undefined, '@');
 		}
 		
 		// Fix double prefixing
