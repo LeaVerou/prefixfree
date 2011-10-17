@@ -96,9 +96,7 @@ var self = window.PrefixFree = {
 			
 			try {
 				xhr.send(null);
-			} catch(e) {
-				window.console && console.error(e);
-			}
+			} catch(e) {}
 		},
 	
 		styleElement: function(style) {
