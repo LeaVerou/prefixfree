@@ -17,10 +17,11 @@ The detected prefix of the current browser (like `'-moz-'` or `'-webkit-'`)
 The detected prefix of the current browser in camelCase format (like `'Moz'` or `'Webkit'`)
 
 	PrefixFree.properties
-	PrefixFree.values
+	PrefixFree.functions
+	PrefixFree.keywords
 	PrefixFree.selectors
 	PrefixFree.atrules
-Properties/values/etc that are **only** available with a prefix in the current browser.
+Properties/functions/keywords/etc that are **only** available with a prefix in the current browser.
 
 ### Methods
 	PrefixFree.prefixCSS(code [, raw])

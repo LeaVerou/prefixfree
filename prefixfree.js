@@ -12,41 +12,42 @@ if(!window.getComputedStyle || !window.addEventListener) {
 
 var self = window.PrefixFree = {
 	prefixCSS: function(css, raw) {
-		var regex, prefix = self.prefix;
+		var prefix = self.prefix;
 		
-		if (self.values.length) {
-			regex = RegExp('\\b(' + self.values.join('|') + ')\\b', 'gi');
+		function fix(what, replacement, after, before) {
+			what = self[what];
 			
-			css = css.replace(regex, prefix + "$1");
+			before = before || '';
+			after = after || '';
+			
+			replacement = replacement || before + prefix + '$1' + after;
+			
+			before = before || '\\b';
+			after = after || '\\b';
+			
+			if(what.length) {
+				var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
+				
+				css = css.replace(regex, replacement);
+			}
 		}
 		
+		fix('functions', prefix + "$1(", '\\s*\\(');
+		fix('keywords');
+		fix('properties', prefix + '$1:', '\\s*:');
+		
+		// Prefix properties *inside* values (issue #8)
 		if (self.properties.length) {
-			regex = RegExp('\\b(' + self.properties.join('|') + '):', 'gi');
+			var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
 			
-			css = css.replace(regex, prefix + "$1:");
-			
-			// Prefix properties *inside* values (issue #8)
-			regex = RegExp('\\b(' + self.valueProperties.join('|') + '):(.+?);\s*$', 'gim');
-			
-			var vpRegex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
-
-			css = css.replace(regex, function($0) {
-				return $0.replace(vpRegex, prefix + "$1")
-			});
+			fix('valueProperties', function($0) {
+				return $0.replace(regex, prefix + "$1")
+			}, ':(.+?);');
 		}
 		
 		if(raw) {
-			if(self.selectors.length) {
-				regex = RegExp('\\b(' + self.selectors.join('|') + ')\\b', 'gi');
-				
-				css = css.replace(regex, self.prefixSelector);
-			}
-			
-			if(self.atrules.length) {
-				regex = RegExp('@(' + self.atrules.join('|') + ')\\b', 'gi');
-				
-				css = css.replace(regex, '@' + prefix + "$1");
-			}
+			fix('selectors', self.prefixSelector);
+			fix('atrules', null, null, '@');
 		}
 		
 		// Fix double prefixing
@@ -229,8 +230,8 @@ var self = window.PrefixFree = {
  * Values
  **************************************/
 (function() {
-// Values that *might* need prefixing
-var values = {
+// Values that might need prefixing
+var functions = {
 	'linear-gradient': {
 		property: 'backgroundImage',
 		params: 'red, teal'
@@ -239,30 +240,34 @@ var values = {
 		property: 'width',
 		params: '1px + 5%'
 	},
-	'initial': {
-		property: 'color'
-	},
 	'element': {
 		property: 'backgroundImage',
 		params: '#foo'
 	}
+},
+
+keywords = {
+	'initial': 'color',
+	'zoom-in': 'cursor',
+	'zoom-out': 'cursor'
 };
 
-values['repeating-linear-gradient'] =
-values['repeating-radial-gradient'] =
-values['radial-gradient'] =
-values['linear-gradient'];
+functions['repeating-linear-gradient'] =
+functions['repeating-radial-gradient'] =
+functions['radial-gradient'] =
+functions['linear-gradient'];
 
-self.values = [];
+self.functions = [];
+self.keywords = [];
 
 var style = document.createElement('div').style;
 
-for (var val in values) {
+for (var func in functions) {
 	// Try if prefix-less version is supported
-	var test = values[val],
+	var test = functions[func],
 		property = test.property,
-		value = val + (test.params? '(' + test.params + ')' : '');
-	
+		value = func + '(' + test.params + ')';
+
 	style[property] = '';
 	style[property] = value;
 	
@@ -279,7 +284,30 @@ for (var val in values) {
 	}
 	
 	// If we're here, it is supported, but with a prefix
-	self.values.push(val);
+	self.functions.push(func);
+}
+
+for (var keyword in keywords) {
+	// Try if prefix-less version is supported
+	var property = keywords[keyword];
+	
+	style[property] = '';
+	style[property] = keyword;
+	
+	if (style[property]) {
+		continue;
+	}
+	
+	// Now try with a prefix
+	style[property] = '';
+	style[property] = self.prefix + keyword;
+	
+	if (!style[property]) {
+		continue;
+	}
+	
+	// If we're here, it is supported, but with a prefix
+	self.keywords.push(keyword);
 }
 
 })();
