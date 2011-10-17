@@ -22,9 +22,6 @@ var self = window.PrefixFree = {
 			
 			replacement = replacement || before + prefix + '$1' + after;
 			
-			before = before || '\\b';
-			after = after || '\\b';
-			
 			if(what.length) {
 				var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
 				
@@ -32,9 +29,9 @@ var self = window.PrefixFree = {
 			}
 		}
 		
-		fix('functions', prefix + "$1(", '\\s*\\(');
-		fix('keywords');
-		fix('properties', prefix + '$1:', '\\s*:');
+		fix('functions', prefix + "$1(", '\\s*\\(', '\\b');
+		fix('keywords', null, '\\b', '\\b');
+		fix('properties', prefix + '$1:', '\\s*:', '\\b');
 		
 		// Prefix properties *inside* values (issue #8)
 		if (self.properties.length) {
@@ -46,8 +43,8 @@ var self = window.PrefixFree = {
 		}
 		
 		if(raw) {
-			fix('selectors', self.prefixSelector);
-			fix('atrules', null, null, '@');
+			fix('selectors', self.prefixSelector, '\\b');
+			fix('atrules', null, '\\b', '@');
 		}
 		
 		// Fix double prefixing
