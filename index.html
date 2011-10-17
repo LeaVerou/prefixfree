@@ -4,7 +4,8 @@
 
 <meta charset="utf-8">
 <title>Prefix free: Break free from CSS vendor prefix hell!</title>
-<link href="style.css" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+<link rel="shortcut icon" href="img/favicon.png" />
 <style>
 	body {
 		transform:none; /* Just to test embedded styles */
@@ -15,17 +16,26 @@
 <body>
 
 <hgroup>
-	<h1>prefix<strong>free</strong></h1>
-	<h2>Break free from CSS -prefix- hell!</h2>
+	<h1>-prefix-free</h1>
+	<h2>Break free from CSS prefix hell!</h2>
 </hgroup>
 
-<a href="https://raw.github.com/LeaVerou/prefixfree/master/prefixfree.min.js" class="download" title="Click to download ->">Only <strong>4KB</strong> minified</a>
+<a href="https://raw.github.com/LeaVerou/prefixfree/master/prefixfree.min.js" class="download" title="Click to download">Only <strong>4KB</strong> minified</a>
 <a href="https://github.com/LeaVerou/prefixfree" target="_blank"><img style="position: fixed; top: 0; right: 0; border: 0;" src="https://a248.e.akamai.net/assets.github.com/img/71eeaab9d563c2b3c590319b398dd35683265e85/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub"></a>
 
-<section id="wtf">
-	<strong>pre•fix•free</strong> <span class="phonetic">|ˈprēˌfiksfrē|</span> <i>n.</i> A script that lets you use only unprefixed CSS properties everywhere. 
+<p id="wtf">
+	<strong>-prefix-free</strong> lets you use only unprefixed CSS properties everywhere. 
 	It works behind the scenes, adding the current browser’s prefix to any CSS code, only when it’s needed.
-</section>
+</p>
+
+<nav>
+	Learn more:<ul>
+		<li><a href="#">Home</a></li>
+		<li><a href="#test-drive">Test drive</a></li>
+		<li><a href="#faq">FAQ</a></li>
+		<li><a href="#plugins">Plugins</a></li>
+	</ul>
+</nav>
 
 <div class="section-container">
 <section id="features">
@@ -33,8 +43,8 @@
 	<ul class="features">
 		<li>Processes every stylesheet in <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements and adds a vendor prefix where needed</li>
 		<li>Processes elements with a <code>style</code> attribute and adds a vendor prefix where needed</li>
-		<li>Takes care of new <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements, <code>style</code> attribute changes and CSSOM changes (<a href="#dynamic-dom">requires plugin</a>)</li>
-		<li>Lets jQuery’s <code>.css()</code> method to get and set unprefixed properties (<a href="#jquery">requires plugin</a>)</li>
+		<li>Takes care of <strong>new</strong> <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> elements, <code>style</code> attribute changes and CSSOM changes (<a href="#dynamic-dom">requires plugin</a>)</li>
+		<li>Lets <strong>jQuery</strong>’s <code>.css()</code> method get and set unprefixed properties (<a href="#jquery">requires plugin</a>)</li>
 	</ul>
 </section>
 <section id="limitations">
@@ -69,9 +79,9 @@
 	<p>In older browsers like IE8, nothing will break, just properties won’t get prefixed. Which wouldn’t be useful anyway as IE8 doesn’t support much CSS3 ;)</p>
 </section>
 
-<section id="test-drive">
+<section id="test-drive" class="page">
 	<h1>Test drive</h1>
-	<p>Test the prefixing that PrefixFree would do for this browser, by writing some CSS below:</p>
+	<p>Test the prefixing that -prefix-free would do for this browser, by writing some CSS below:</p>
 	<textarea id="source">@keyframes rotate {
     from { transform: rotate(15deg) }
     to { transform: rotate(375deg) }	
@@ -102,40 +112,41 @@
 </section>
 
 
-<section id="faq">
+<section id="faq" class="page">
 	<h1>FAQ</h1>
 	
 	<section>
-		<h1>You're kinda destroying the whole idea behind vendor prefixes</h1>
+		<h1>You're destroying the whole idea behind vendor prefixes</h1>
 		<p>Not really. Properties that <strong>already</strong> have a prefix won’t be altered. So, if you want to specify different behavior for a certain engine just use already prefixed properties.</p>
 	</section>
 	
 	<section id="local-xhr">
 		<h1>How do I enable local testing?</h1>
-		<p>Firefox (and IE?) natively support local XHR, so PrefixFree will work fine locally with them.</p>
-		<p>To enable local XHR for Chrome, you need to run it with the flag <code>--allow-file-access-from-files</code>.</p>
-		<p>To enable local XHR for Opera, you have to go to <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>, check that option and Save.</p>
+		<p>Firefox (and IE?) natively support local XHR, so -prefix-free will work fine locally with them.</p>
+		<p>To enable local XHR for <strong>Chrome</strong>, you need to run it with the flag <code>--allow-file-access-from-files</code>.</p>
+		<p>To enable local XHR for <strong>Opera</strong>, you have to go to <a href="opera:config#UserPrefs|AllowFileXMLHttpRequest">opera:config#UserPrefs|AllowFileXMLHttpRequest</a>, check that option and Save.</p>
 	</section>
 	
 	<section>
 		<h1>Something like this belongs to the server-side</h1>
-		<p>A server side script would need to add all prefixes, making the size of the CSS file considerably larger. Also, it should maintain a list of features that need prefixes, or add them all and unnecessarily bloat the stylesheet. Prefixfree automatically detects what needs a prefix and what doesn’t.</p>
+		<p>A server side script would need to add all prefixes, making the size of the CSS file considerably larger. Also, it should maintain a list of features that need prefixes, or add them all and unnecessarily bloat the stylesheet. -prefix-free automatically detects what needs a prefix and what doesn’t.</p>
 		<p>Also, a common argument against doing this on the client side, is that it makes the design rely on JavaScript. However, that is completely false: If JS is disabled, only some of the CSS3 won’t show. But if your design <em>relies</em> on CSS3 to be functional, you have bigger problems bro.</p>
 		
-		<p>But every solution has its own pros and cons. If you would feel more comfortable with a server-side script, use that. Remember: nobody forced you to use PrefixFree. KTHXBAI ☺</p>
+		<p>But every solution has its own pros and cons. If you would feel more comfortable with a server-side script, use that and don’t troll me please.</p>
+		<p>Remember: nobody forced you to use -prefix-free. <strong>KTHXBAI ☺</strong></p>
 	</section>
 </section>
 
-<section id="plugins">
+<section id="plugins" class="page">
 	<h1>Plugins</h1>
-	<p>Extra code on top of PrefixFree that makes it more flexible, integrates it with different APIs etc</p>
+	<p>Extra code on top of -prefix-free that makes it more flexible, integrates it with different APIs etc</p>
 	
 	<section id="dynamic-dom">
 		<h1>Dynamic DOM plugin</h1>
-		<p>Originally a part of PrefixFree, it’s now a separate plugin. It makes PrefixFree take care of:</p>
+		<p>Originally a part of -prefix-free, it’s now a separate plugin. It makes -prefix-free take care of:</p>
 		<ul class="features">
-			<li>New <code>&lt;link&gt;</code> and <code>&lt;style&gt;</code> added to the document afterwards</li>
-			<li>New elements with a <code>style</code> attribute added to the document afterwards</li>
+			<li><strong>New</strong> <code>&lt;link&gt;</code> and <code>&lt;style&gt;</code> added to the document afterwards</li>
+			<li><strong>New</strong> elements with a <code>style</code> attribute added to the document afterwards</li>
 			<li><code>style</code> attribute changes through <code>setAttribute()</code> (except in Webkit)</li>
 			<li>Getting and setting unprefixed properties through the CSSOM, like:
 				<pre>element.style.transform = 'rotate(10deg)';</pre>
@@ -173,27 +184,7 @@
 </footer>
 
 <script src="prefixfree.js"></script>
-
-<script>
-(function(){
-
-function $(id) { return document.getElementById(id) }
-
-if(window.PrefixFree) {
-	var source = $('source'),
-		prefixed = $('prefixed');
-		
-	(source.oninput = function() {
-		prefixed.value = PrefixFree.prefixCSS(source.value, true);
-	})();
-	
-	source.onscroll = function() {
-		prefixed.scrollTop = source.scrollTop;
-	}
-}
-		
-})();
-</script>
+<script src="index.js"></script>
 
 <a href="http://twitter.com/share" class="twitter-share-button" data-count="vertical" data-via="LeaVerou">Tweet</a>
 <script src="http://platform.twitter.com/widgets.js"></script>
