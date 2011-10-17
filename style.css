@@ -186,6 +186,7 @@ nav:after {
 				padding:.2em .6em;
 				color: white;
 				text-decoration: none;
+				text-shadow: .1em .1em black;
 			}
 			
 			nav > ul > li > a:hover {
@@ -194,7 +195,7 @@ nav:after {
 			}
 
 /* Pages */
-body.home .current.page {
+body.home .page {
 	display: none;	
 }
 
@@ -257,7 +258,7 @@ section#test-drive {
 
 	section#test-drive > textarea {
 		width: 49.5%;
-		height: 15em;
+		height: 30em;
 		float: left;
 		box-sizing: border-box;
 		border: 1px solid slategray;
