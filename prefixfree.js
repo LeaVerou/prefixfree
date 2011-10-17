@@ -72,7 +72,7 @@ var self = window.PrefixFree = {
 				if(xhr.readyState === 4) {
 					var css = xhr.responseText;
 					
-					if(css) {
+					if(css && parent) {
 						css = self.prefixCSS(css, true);
 						
 						// Convert relative URLs to absolute
