@@ -68,7 +68,7 @@ body {
 	background: url(img/raisedfist.png) bottom right no-repeat,
 		linear-gradient(0, rgba(255,255,255,0) 10%, white),
 		url(img/noise.png) white;
-	font: 100%/1.5 Arvo, sans-serif;
+	font: 100%/1.6 Arvo, sans-serif;
 	text-shadow: 0 1px white;
 	hyphens:auto;
 	box-shadow: -8px 0 15px -8px rgba(0,0,0,.5);
