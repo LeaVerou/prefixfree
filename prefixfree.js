@@ -57,7 +57,12 @@ var self = window.PrefixFree = {
 	
 	process: {
 		link: function(link) {
-			if(!/\bstylesheet\b/i.test(link.rel)) {
+			try {
+				if(!/\bstylesheet\b/i.test(link.rel) || !link.sheet.cssRules) {
+					return;
+				}
+			}
+			catch(e) {
 				return;
 			}
 			
@@ -94,9 +99,7 @@ var self = window.PrefixFree = {
 				}
 			};
 			
-			try {
-				xhr.send(null);
-			} catch(e) {}
+			xhr.send(null);
 		},
 	
 		styleElement: function(style) {
