@@ -17,22 +17,34 @@ if(window.PrefixFree) {
 	}
 }
 
-function page() {
+(window.onhashchange = function() {
+	var target, page, previousPage;
+	
 	if(location.hash) {
-		var target = document.querySelector('.page' + location.hash);
-		console.log(target);
-		if(target) {
-			document.body.className = 'in-page';
-			return;
+		page = target = document.querySelector(location.hash);
+		
+		while(page && page.className != 'page') {
+			page = page.parentNode;
 		}
 	}
 	
-	document.body.className = 'home';
-}
+	(previousPage = document.querySelector('.current.page')) && (previousPage.className = 'page');
+	
+	if(page) {
+		page.className = 'current page';
+		
+		document.body.className = 'in-page';
+	}
+	else {
+		document.body.className = 'home';
+	}
 
-addEventListener('hashchange', page, false);
-
-page();
+	if(target) {
+		setTimeout(function(){
+			target.scrollIntoView(true);
+		}, 10);
+	}
+})();
 		
 })();
 

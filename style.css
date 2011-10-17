@@ -194,12 +194,12 @@ nav:after {
 			}
 
 /* Pages */
-body.home .page {
+body.home .current.page {
 	display: none;	
 }
 
 body.in-page > .section-container,
-body.in-page > section:not(:target) {
+body.in-page > section:not(.current) {
 	display: none;
 }
 /* end pages */
