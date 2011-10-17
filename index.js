@@ -40,9 +40,7 @@ if(window.PrefixFree) {
 	}
 
 	if(target) {
-		setTimeout(function(){
-			target.scrollIntoView(true);
-		}, 10);
+		target.scrollIntoView(true);
 	}
 })();
 		
