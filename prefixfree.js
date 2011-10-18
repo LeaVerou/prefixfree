@@ -375,9 +375,6 @@ self.valueProperties = [
  **************************************/
 $('link[rel~="stylesheet"]').forEach(self.process.link);
 
-// Add class for current prefix
-root.className += ' ' + self.prefix;
-
 document.addEventListener('DOMContentLoaded', function() {
 	// Linked stylesheets
 	$('link[rel~="stylesheet"]').forEach(self.process.link);
@@ -389,6 +386,9 @@ document.addEventListener('DOMContentLoaded', function() {
 	$('[style]').forEach(self.process.styleAttribute);
 }, false);
 
+// Add class for current prefix and remove unPrefixed if present (usable to remove flickering)
+root.className = root.className.replace
+      ( /(?:^|\s)unPrefixed(?!\S)/ , '' )+self.prefix
 
 /**************************************
  * Utilities
