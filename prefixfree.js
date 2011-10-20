@@ -262,52 +262,33 @@ self.keywords = [];
 
 var style = document.createElement('div').style;
 
-for (var func in functions) {
-	// Try if prefix-less version is supported
-	var test = functions[func],
-		property = test.property,
-		value = func + '(' + test.params + ')';
-
+function supportsValue(value, property) {
 	style[property] = '';
 	style[property] = value;
 	
-	if (style[property]) {
-		continue;
+	return !!style[property];
+}
+
+for (var func in functions) {
+	var test = functions[func],
+		property = test.property,
+		value = func + '(' + test.params + ')';
+	
+	if (!supportsValue(value, property)
+	  && supportsValue(self.prefix + value, property)) {
+		// It's supported, but with a prefix
+		self.functions.push(func);
 	}
-	
-	// Now try with a prefix
-	style[property] = '';
-	style[property] = self.prefix + value;
-	
-	if (!style[property]) {
-		continue;
-	}
-	
-	// If we're here, it is supported, but with a prefix
-	self.functions.push(func);
 }
 
 for (var keyword in keywords) {
-	// Try if prefix-less version is supported
 	var property = keywords[keyword];
 	
-	style[property] = '';
-	style[property] = keyword;
-	
-	if (style[property]) {
-		continue;
+	if (!supportsValue(keyword, property)
+	  && supportsValue(self.prefix + keyword, property)) {
+		// It's supported, but with a prefix
+		self.keywords.push(keyword);
 	}
-	
-	// Now try with a prefix
-	style[property] = '';
-	style[property] = self.prefix + keyword;
-	
-	if (!style[property]) {
-		continue;
-	}
-	
-	// If we're here, it is supported, but with a prefix
-	self.keywords.push(keyword);
 }
 
 })();
@@ -316,52 +297,50 @@ for (var keyword in keywords) {
  * Selectors and @-rules
  **************************************/
 (function() {
-	var 
-	selectors = {
-		':read-only': null,
-		':read-write': null,
-		':any-link': null,
-		'::selection': null
-	},
+
+var 
+selectors = {
+	':read-only': null,
+	':read-write': null,
+	':any-link': null,
+	'::selection': null
+},
+
+atrules = {
+	'keyframes': 'name',
+	'viewport': null,
+	'document': 'regexp(".")'
+};
+
+self.selectors = [];
+self.atrules = [];
+
+var style = root.appendChild(document.createElement('style'));
+
+function supportsSelector(selector) {
+	style.textContent = selector + '{}';  // Safari 4 has issues with style.innerHTML
 	
-	atrules = {
-		'keyframes': 'name',
-		'viewport': null,
-		'document': 'regexp(".")'
-	};
-	
-	self.selectors = [];
-	self.atrules = [];
-	
-	var style = root.appendChild(document.createElement('style'));
-	
-	for(var selector in selectors) {
-		var rule = selectors[selector]? '(' + selectors[selector] + '){}' : '{}',
-			test = self.prefixSelector(selector) + rule + selector + rule;
+	return !!style.sheet.cssRules.length;
+}
+
+for(var selector in selectors) {
+	var test = selector + (selectors[selector]? '(' + selectors[selector] + ')' : '');
 		
-		style.textContent = test; // Safari 4 has issues with style.innerHTML
-		
-		var cssRules = style.sheet.cssRules;
-		if(cssRules.length === 1 && cssRules[0].selectorText.indexOf(self.prefix) > -1) {
-			self.selectors.push(selector);
-		}
+	if(!supportsSelector(test) && supportsSelector(self.prefixSelector(test))) {
+		self.selectors.push(selector);
 	}
+}
+
+for(var atrule in atrules) {
+	var test = atrule + ' ' + (atrules[atrule] || '');
 	
-	for(var atrule in atrules) {
-		rule = atrule + ' ' + (atrules[atrule] || '') + '{}';
-		
-		style.textContent = '@' + rule;
-		
-		if(style.sheet.cssRules.length === 0) {	
-			style.textContent = '@' + self.prefix + rule;
-	
-			if(style.sheet.cssRules.length > 0) {
-				self.atrules.push(atrule);
-			}
-		}
+	if(!supportsSelector('@' + test) && supportsSelector('@' + self.prefix + test)) {
+		self.atrules.push(atrule);
 	}
-	
-	root.removeChild(style);
+}
+
+root.removeChild(style);
+
 })();
 
 // Properties that accept properties as their value
