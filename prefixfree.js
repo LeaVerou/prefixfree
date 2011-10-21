@@ -4,7 +4,7 @@
  * MIT license
  */
 
-(function(root){
+(function(root, undefined){
 
 if(!window.getComputedStyle || !window.addEventListener) {
 	return;
@@ -17,13 +17,13 @@ var self = window.PrefixFree = {
 		function fix(what, replacement, after, before) {
 			what = self[what];
 			
-			var rb = before != undefined? before : '',
-				ra = after != undefined? after : '';
+			var rb = before !== undefined? before : '',
+				ra = after !== undefined? after : '';
 			
 			replacement = replacement || rb + prefix + '$1' + ra;
 			
-			rb = before != undefined? before : '\\b';
-			ra = after != undefined? after : '\\b';
+			rb = before !== undefined? before : '\\b';
+			ra = after !== undefined? after : '\\b';
 			
 			if(what.length) {
 				var regex = RegExp(rb + '(' + what.join('|') + ')' + ra, 'gi');
