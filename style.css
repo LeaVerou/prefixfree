@@ -195,10 +195,7 @@ nav:after {
 			}
 
 /* Pages */
-body.home .page {
-	display: none;	
-}
-
+body.home .page,
 body.in-page > .section-container,
 body.in-page > section:not(.current) {
 	display: none;

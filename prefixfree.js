@@ -93,6 +93,7 @@ var self = window.PrefixFree = {
 						
 						var style = document.createElement('style');
 						style.textContent = css;
+						style.media = link.media;
 						
 						parent.insertBefore(style, link);
 						parent.removeChild(link);

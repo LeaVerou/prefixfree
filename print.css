@@ -1,0 +1,11 @@
+.download,
+.twitter-share-button,
+.github-ribbon,
+nav {
+	display:none;
+}
+
+blockquote {
+	position: static;
+	width: auto;
+}
