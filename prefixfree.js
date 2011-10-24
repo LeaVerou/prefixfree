@@ -58,6 +58,7 @@ var self = window.PrefixFree = {
 	
 	process: {
 		link: function(link) {
+		
 			try {
 				if(!/\bstylesheet\b/i.test(link.rel) || !link.sheet.cssRules) {
 					return;
@@ -66,7 +67,7 @@ var self = window.PrefixFree = {
 			catch(e) {
 				return;
 			}
-			
+	
 			var url = link.getAttribute('href') || link.getAttribute('data-href'),
 			    base = url.replace(/[^\/]+$/, ''),
 			    parent = link.parentNode,
@@ -102,6 +103,8 @@ var self = window.PrefixFree = {
 			};
 			
 			xhr.send(null);
+			
+			link.setAttribute('data-inprogress', '');
 		},
 	
 		styleElement: function(style) {
@@ -360,7 +363,7 @@ root.className += ' ' + self.prefix;
 
 document.addEventListener('DOMContentLoaded', function() {
 	// Linked stylesheets
-	$('link[rel~="stylesheet"]').forEach(self.process.link);
+	$('link[rel~="stylesheet"]:not([data-inprogress])').forEach(self.process.link);
 	
 	// Inline stylesheets
 	$('style').forEach(self.process.styleElement);
