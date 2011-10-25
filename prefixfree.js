@@ -95,6 +95,7 @@ var self = window.PrefixFree = {
 						var style = document.createElement('style');
 						style.textContent = css;
 						style.media = link.media;
+						style.disabled = link.disabled;
 						
 						parent.insertBefore(style, link);
 						parent.removeChild(link);
@@ -108,7 +109,9 @@ var self = window.PrefixFree = {
 		},
 	
 		styleElement: function(style) {
+			var disabled = style.disabled;
 			style.textContent = self.prefixCSS(style.textContent, true);
+			style.disabled = disabled;
 		},
 	
 		styleAttribute: function(element) {
