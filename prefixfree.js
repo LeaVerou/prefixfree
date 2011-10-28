@@ -300,7 +300,10 @@ var functions = {
 keywords = {
 	'initial': 'color',
 	'zoom-in': 'cursor',
-	'zoom-out': 'cursor'
+	'zoom-out': 'cursor',
+	'box': 'display',
+	'flexbox': 'display',
+	'inline-flexbox': 'display'
 };
 
 functions['repeating-linear-gradient'] =
@@ -316,7 +319,7 @@ var style = document.createElement('div').style;
 function supportsValue(value, property) {
 	style[property] = '';
 	style[property] = value;
-	
+
 	return !!style[property];
 }
 
@@ -334,7 +337,7 @@ for (var func in functions) {
 
 for (var keyword in keywords) {
 	var property = keywords[keyword];
-	
+
 	if (!supportsValue(keyword, property)
 	  && supportsValue(self.prefix + keyword, property)) {
 		// It's supported, but with a prefix
