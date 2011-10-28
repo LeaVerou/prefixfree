@@ -6,7 +6,7 @@ if(!$ || !self) {
 
 for(var i=0; i<self.properties.length; i++) {
 	var property = self.properties[i],
-		camelCased = self.camelCase(property),
+		camelCased = StyleFix.camelCase(property),
 		PrefixCamelCased = self.prefixProperty(property, true);
 	
 	$.cssProps[camelCased] = PrefixCamelCased;

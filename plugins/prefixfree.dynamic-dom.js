@@ -1,6 +1,5 @@
-(function(){
-
-var self = window.PrefixFree;
+// StyleFix Dynamic DOM plugin
+(function(self){
 
 if(!self) {
 	return;
@@ -15,20 +14,20 @@ self.events = {
 		}
 		
 		if(/link/i.test(tag)) {
-			self.process.link(node);
+			self.link(node);
 		}
 		else if(/style/i.test(tag)) {
-			self.process.styleElement(node);
+			self.styleElement(node);
 		}
 		else if (node.hasAttribute('style')) {
-			self.process.styleAttribute(node);
+			self.styleAttribute(node);
 		}
 	},
 	
 	DOMAttrModified: function(evt) {
 		if(evt.attrName === 'style') {
 			document.removeEventListener('DOMAttrModified', self.events.DOMAttrModified, false);
-			self.process.styleAttribute(evt.target);
+			self.styleAttribute(evt.target);
 			document.addEventListener('DOMAttrModified', self.events.DOMAttrModified, false);
 		}
 	}
@@ -40,38 +39,47 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// Listen for style attribute changes
 	document.addEventListener('DOMAttrModified', self.events.DOMAttrModified, false);
-	
-	// Add accessors for CSSOM property changes
-	if(window.CSSStyleDeclaration) {
-		for(var i=0; i<self.properties.length; i++) {
-			var property = self.camelCase(self.properties[i]),
-			    prefixed = self.prefixProperty(property),
-			    proto = CSSStyleDeclaration.prototype,
-			    getter = (function(prefixed) {
-			    	return function() {
-			    		return this[prefixed];
-			    	}
-			    })(prefixed),
-			    setter = (function(prefixed) {
-			    	return function(value) {
-			    		this[prefixed] = value;
-			    	}
-			    })(prefixed);
-	
-			if(Object.defineProperty) {
-				Object.defineProperty(proto, property, {
-					get: getter,
-					set: setter,
-					enumerable: true,
-					configurable: true
-				});
-			}
-			else if(proto.__defineGetter__) {
-				proto.__defineGetter__(property, getter);
-				proto.__defineSetter__(property, setter);
-			}
-		}
-	}
 }, false);
 
-})();
+})(window.StyleFix);
+
+// PrefixFree CSSOM plugin
+(function(self){
+
+if(!self) {
+	return;
+}
+
+// Add accessors for CSSOM property changes
+if(window.CSSStyleDeclaration) {
+	for(var i=0; i<self.properties.length; i++) {
+		var property = StyleFix.camelCase(self.properties[i]),
+		    prefixed = self.prefixProperty(property),
+		    proto = CSSStyleDeclaration.prototype,
+		    getter = (function(prefixed) {
+		    	return function() {
+		    		return this[prefixed];
+		    	}
+		    })(prefixed),
+		    setter = (function(prefixed) {
+		    	return function(value) {
+		    		this[prefixed] = value;
+		    	}
+		    })(prefixed);
+
+		if(Object.defineProperty) {
+			Object.defineProperty(proto, property, {
+				get: getter,
+				set: setter,
+				enumerable: true,
+				configurable: true
+			});
+		}
+		else if(proto.__defineGetter__) {
+			proto.__defineGetter__(property, getter);
+			proto.__defineSetter__(property, setter);
+		}
+	}
+}
+
+})(window.PrefixFree);
