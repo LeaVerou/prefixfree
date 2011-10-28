@@ -1,88 +1,42 @@
 /**
- * PrefixFree 1.0.4
+ * StyleFix 1.0
  * @author Lea Verou
  * MIT license
  */
 
-(function(root, undefined){
+(function(){
 
-if(!window.getComputedStyle || !window.addEventListener) {
+if(!window.addEventListener) {
 	return;
 }
 
-var self = window.PrefixFree = {
-	prefixCSS: function(css, raw) {
-		var prefix = self.prefix;
-		
-		function fix(what, replacement, after, before) {
-			what = self[what];
-			
-			var rb = before !== undefined? before : '',
-				ra = after !== undefined? after : '';
-			
-			replacement = replacement || rb + prefix + '$1' + ra;
-			
-			rb = before !== undefined? before : '\\b';
-			ra = after !== undefined? after : '\\b';
-			
-			if(what.length) {
-				var regex = RegExp(rb + '(' + what.join('|') + ')' + ra, 'gi');
-				
-				css = css.replace(regex, replacement);
-			}
-		}
-		
-		fix('functions', prefix + "$1(", '\\s*\\(');
-		fix('keywords', null);
-		fix('properties', prefix + '$1:', '\\s*:');
-		
-		// Prefix properties *inside* values (issue #8)
-		if (self.properties.length) {
-			var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
-			
-			fix('valueProperties', function($0) {
-				return $0.replace(regex, prefix + "$1")
-			}, ':(.+?);');
-		}
-		
-		if(raw) {
-			fix('selectors', self.prefixSelector, '\\b', '');
-			fix('atrules', null, undefined, '@');
-		}
-		
-		// Fix double prefixing
-		css = css.replace(RegExp('-' + prefix, 'g'), '-');
-		
-		return css;
-	},
-	
-	process: {
-		link: function(link) {
-		
-			try {
-				if(!/\bstylesheet\b/i.test(link.rel) || !link.sheet.cssRules) {
-					return;
-				}
-			}
-			catch(e) {
+var self = window.StyleFix = {
+	link: function(link) {
+		try {
+			if(!/\bstylesheet\b/i.test(link.rel) || !link.sheet.cssRules) {
 				return;
 			}
-	
-			var url = link.getAttribute('href') || link.getAttribute('data-href'),
-			    base = url.replace(/[^\/]+$/, ''),
-			    parent = link.parentNode,
-			    xhr = new XMLHttpRequest();
-			
-			xhr.open('GET', url);
+		}
+		catch(e) {
+			return;
+		}
 
-			xhr.onreadystatechange = function() {
-				if(xhr.readyState === 4) {
-					var css = xhr.responseText;
+		var url = link.getAttribute('href') || link.getAttribute('data-href'),
+		    base = url.replace(/[^\/]+$/, ''),
+		    parent = link.parentNode,
+		    xhr = new XMLHttpRequest();
+		
+		xhr.open('GET', url);
+
+		xhr.onreadystatechange = function() {
+			if(xhr.readyState === 4) {
+				var css = xhr.responseText;
+				
+				if(css && link.parentNode) {
+					css = self.fix(css, true, link);
 					
-					if(css && link.parentNode) {
-						css = self.prefixCSS(css, true);
-						
-						// Convert relative URLs to absolute
+					// Convert relative URLs to absolute, if needed
+					if(base) {
 						css = css.replace(/url\((?:'|")?(.+?)(?:'|")?\)/gi, function($0, url) {
 							if(!/^([a-z]{3,10}:|\/)/i.test(url)) { // If url not absolute
 								// May contain sequences like /../ and /./ but those DO work
@@ -91,36 +45,134 @@ var self = window.PrefixFree = {
 							
 							return $0;						
 						});
-						
-						var style = document.createElement('style');
-						style.textContent = css;
-						style.media = link.media;
-						style.disabled = link.disabled;
-						
-						parent.insertBefore(style, link);
-						parent.removeChild(link);
 					}
+					
+					var style = document.createElement('style');
+					style.textContent = css;
+					style.media = link.media;
+					style.disabled = link.disabled;
+					
+					parent.insertBefore(style, link);
+					parent.removeChild(link);
 				}
-			};
-			
-			xhr.send(null);
-			
-			link.setAttribute('data-inprogress', '');
-		},
+			}
+		};
+		
+		xhr.send(null);
+		
+		link.setAttribute('data-inprogress', '');
+	},
+
+	styleElement: function(style) {
+		var disabled = style.disabled;
+		
+		style.textContent = self.fix(style.textContent, true, style);
+		
+		style.disabled = disabled;
+	},
+
+	styleAttribute: function(element) {
+		var css = element.getAttribute('style');
+		
+		css = self.fix(css, false, element);
+		
+		element.setAttribute('style', css);
+	},
 	
-		styleElement: function(style) {
-			var disabled = style.disabled;
-			style.textContent = self.prefixCSS(style.textContent, true);
-			style.disabled = disabled;
-		},
+	register: function(fixer) {
+		this.fixers = this.fixers || [];
+		
+		this.fixers.push(fixer);
+	},
 	
-		styleAttribute: function(element) {
-			var css = element.getAttribute('style');
-			
-			css = self.prefixCSS(css);
-			
-			element.setAttribute('style', css);
+	fix: function(css, raw) {
+		for(var i=0; i<this.fixers.length; i++) {
+			css = this.fixers[i](css, raw) || css;
 		}
+		
+		return css;
+	},
+	
+	camelCase: function(str) {
+		return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
+	},
+	
+	deCamelCase: function(str) {
+		return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
+	}
+}
+
+/**************************************
+ * Process styles
+ **************************************/
+setTimeout(function(){
+	$('link[rel~="stylesheet"]').forEach(StyleFix.link);
+	
+	document.addEventListener('DOMContentLoaded', function() {
+		// Linked stylesheets
+		$('link[rel~="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
+		
+		// Inline stylesheets
+		$('style').forEach(StyleFix.styleElement);
+		
+		// Inline styles
+		$('[style]').forEach(StyleFix.styleAttribute);
+	}, false);
+	
+	function $(expr, con) {
+		return [].slice.call((con || document).querySelectorAll(expr));
+	}
+}, 10);
+
+})();
+
+/**
+ * PrefixFree 1.0.4
+ * @author Lea Verou
+ * MIT license
+ */
+(function(root, undefined){
+
+if(!window.StyleFix || !window.getComputedStyle) {
+	return;
+}
+
+var self = window.PrefixFree = {
+	prefixCSS: function(css, raw) {
+		var prefix = self.prefix;
+		
+		function fix(what, before, after, replacement) {
+			what = self[what];
+			
+			if(what.length) {
+				var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
+
+				css = css.replace(regex, replacement);
+			}
+		}
+		
+		fix('functions', '(\\s|:)', '\\s*\\(', '$1' + prefix + '$2(');
+		fix('keywords', '(\\s|:)', '(\\s|;|\\})', '$1' + prefix + '$2$3');
+		fix('properties', '\\b', '\\s*:', prefix + '$1:');
+		
+		// Prefix properties *inside* values (issue #8)
+		if (self.properties.length) {
+			var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
+			
+			fix('valueProperties', '\\b', ':(.+?);', function($0) {
+				return $0.replace(regex, prefix + "$1")
+			});
+		}
+		
+		if(raw) {
+			fix('selectors', '', '\\b', self.prefixSelector);
+			fix('atrules', '@', '\\b', '@' + prefix + '$1');
+		}
+		
+		// Fix double prefixing
+		css = css.replace(RegExp('-' + prefix, 'g'), '-');
+		
+		return css;
 	},
 	
 	// Warning: prefixXXX functions prefix no matter what, even if the XXX is supported prefix-less
@@ -131,15 +183,7 @@ var self = window.PrefixFree = {
 	prefixProperty: function(property, camelCase) {
 		var prefixed = self.prefix + property;
 		
-		return camelCase? self.camelCase(prefixed) : prefixed;
-	},
-	
-	camelCase: function(str) {
-		return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
-	},
-	
-	deCamelCase: function(str) {
-		return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
+		return camelCase? StyleFix.camelCase(prefixed) : prefixed;
 	}
 };
 
@@ -176,7 +220,7 @@ var self = window.PrefixFree = {
 					parts.pop();
 					
 					var shorthand = parts.join('-'),
-					    shorthandDOM = self.camelCase(shorthand);
+					    shorthandDOM = StyleFix.camelCase(shorthand);
 
 					if(shorthandDOM in dummy) {
 						pushUnique(properties, shorthand);
@@ -194,12 +238,12 @@ var self = window.PrefixFree = {
 	}
 	else {
 		for(var property in style) {
-			iterate(self.deCamelCase(property));
+			iterate(StyleFix.deCamelCase(property));
 		}
 	}
 	
 	self.prefix = '-' + highest.prefix + '-';
-	self.Prefix = self.camelCase(self.prefix);
+	self.Prefix = StyleFix.camelCase(self.prefix);
 	
 	properties.sort();
 	
@@ -356,25 +400,10 @@ self.valueProperties = [
 	'transition-property'
 ]
 
-/**************************************
- * Process styles
- **************************************/
-$('link[rel~="stylesheet"]').forEach(self.process.link);
-
 // Add class for current prefix
 root.className += ' ' + self.prefix;
 
-document.addEventListener('DOMContentLoaded', function() {
-	// Linked stylesheets
-	$('link[rel~="stylesheet"]:not([data-inprogress])').forEach(self.process.link);
-	
-	// Inline stylesheets
-	$('style').forEach(self.process.styleElement);
-	
-	// Inline styles
-	$('[style]').forEach(self.process.styleAttribute);
-}, false);
-
+StyleFix.register(self.prefixCSS);
 
 /**************************************
  * Utilities
@@ -386,8 +415,6 @@ function pushUnique(arr, val) {
 	}
 }
 
-function $(expr, con) {
-	return [].slice.call((con || document).querySelectorAll(expr));
-}
+
 
 })(document.documentElement);
