@@ -1,12 +1,12 @@
 @font-face {
 	font-family: Arvo;
-	src: url(fonts/Arvo-Regular.ttf) format('truetype');
+	src: url(../fonts/Arvo-Regular.ttf) format('truetype');
 }
 
 @font-face {
 	font-family: Arvo;
 	font-weight: bold;
-	src: url(fonts/Arvo-Bold.ttf) format('truetype');
+	src: url(../fonts/Arvo-Bold.ttf) format('truetype');
 }
 
 @keyframes colorcycle {
@@ -64,10 +64,10 @@ body {
 	max-width: 800px;
 	padding: 2em 4em;
 	margin: auto;
-	background: url(img/noise.png) white;
-	background: url(img/raisedfist.png) bottom right no-repeat,
+	background: url(../img/noise.png) white;
+	background: url(../img/raisedfist.png) bottom right no-repeat,
 		linear-gradient(0, rgba(255,255,255,0) 10%, white),
-		url(img/noise.png) white;
+		url(../img/noise.png) white;
 	font: 100%/1.6 Arvo, sans-serif;
 	text-shadow: 0 1px white;
 	hyphens:auto;
@@ -97,7 +97,7 @@ hgroup {
 }
 
 	hgroup > h1:before {
-		content: url(img/logo.svg);
+		content: url(../img/logo.svg);
 		display: block;
 		margin: auto;
 	}

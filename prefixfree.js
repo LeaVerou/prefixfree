@@ -45,6 +45,9 @@ var self = window.StyleFix = {
 							
 							return $0;						
 						});
+						
+						// behavior URLs shoudn’t be converted (Issue #19)
+						css = css.replace(RegExp('\\b(behavior:\\s*?url\\(\'?"?)' + base, 'gi'), '$1');
 					}
 					
 					var style = document.createElement('style');
