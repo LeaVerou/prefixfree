@@ -251,7 +251,7 @@ var self = window.PrefixFree = {
 	properties.sort();
 	
 	self.properties = [];
-	
+
 	// Get properties ONLY supported with a prefix
 	for(var i=0; i<properties.length; i++) {
 		var property = properties[i];
@@ -263,7 +263,7 @@ var self = window.PrefixFree = {
 		if(property.indexOf(self.prefix) === 0) { // we might have multiple prefixes, like Opera
 			var unprefixed = property.slice(self.prefix.length);
 			
-			if(properties.indexOf(unprefixed) === -1) {
+			if(!(StyleFix.camelCase(unprefixed) in dummy)) {
 				self.properties.push(unprefixed);
 			}
 		}
