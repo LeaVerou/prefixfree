@@ -103,13 +103,15 @@ var self = window.StyleFix = {
 	deCamelCase: function(str) {
 		return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
 	}
-}
+};
 
 /**************************************
  * Process styles
  **************************************/
-setTimeout(function(){
-	$('link[rel~="stylesheet"]').forEach(StyleFix.link);
+(function(){
+	setTimeout(function(){
+		$('link[rel~="stylesheet"]').forEach(StyleFix.link);
+	}, 10);
 	
 	document.addEventListener('DOMContentLoaded', function() {
 		// Linked stylesheets
@@ -125,7 +127,7 @@ setTimeout(function(){
 	function $(expr, con) {
 		return [].slice.call((con || document).querySelectorAll(expr));
 	}
-}, 10);
+})();
 
 })();
 
