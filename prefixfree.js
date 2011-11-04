@@ -1,5 +1,5 @@
 /**
- * StyleFix 1.0
+ * StyleFix 1.0.1
  * @author Lea Verou
  * MIT license
  */
@@ -83,10 +83,21 @@ var self = window.StyleFix = {
 		element.setAttribute('style', css);
 	},
 	
-	register: function(fixer) {
+	process: function() {
+		// Linked stylesheets
+		$('link[rel~="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
+		
+		// Inline stylesheets
+		$('style').forEach(StyleFix.styleElement);
+		
+		// Inline styles
+		$('[style]').forEach(StyleFix.styleAttribute);
+	},
+	
+	register: function(fixer, index) {
 		this.fixers = this.fixers || [];
 		
-		this.fixers.push(fixer);
+		this.fixers.splice(index === undefined? this.fixers.length : index, 0, fixer);
 	},
 	
 	fix: function(css, raw) {
@@ -114,21 +125,12 @@ var self = window.StyleFix = {
 		$('link[rel~="stylesheet"]').forEach(StyleFix.link);
 	}, 10);
 	
-	document.addEventListener('DOMContentLoaded', function() {
-		// Linked stylesheets
-		$('link[rel~="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
-		
-		// Inline stylesheets
-		$('style').forEach(StyleFix.styleElement);
-		
-		// Inline styles
-		$('[style]').forEach(StyleFix.styleAttribute);
-	}, false);
-	
-	function $(expr, con) {
-		return [].slice.call((con || document).querySelectorAll(expr));
-	}
+	document.addEventListener('DOMContentLoaded', StyleFix.process, false);
 })();
+
+function $(expr, con) {
+	return [].slice.call((con || document).querySelectorAll(expr));
+}
 
 })();
 
