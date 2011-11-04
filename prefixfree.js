@@ -21,7 +21,7 @@ var self = window.StyleFix = {
 			return;
 		}
 
-		var url = link.getAttribute('href') || link.getAttribute('data-href'),
+		var url = link.href || link.getAttribute('data-href'),
 		    base = url.replace(/[^\/]+$/, ''),
 		    parent = link.parentNode,
 		    xhr = new XMLHttpRequest();
@@ -54,6 +54,7 @@ var self = window.StyleFix = {
 					style.textContent = css;
 					style.media = link.media;
 					style.disabled = link.disabled;
+					style.setAttribute('data-href', link.getAttribute('href'));
 					
 					parent.insertBefore(style, link);
 					parent.removeChild(link);
