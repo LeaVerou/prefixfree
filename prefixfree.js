@@ -95,14 +95,13 @@ var self = window.StyleFix = {
 	},
 	
 	register: function(fixer, index) {
-		this.fixers = this.fixers || [];
-		
-		this.fixers.splice(index === undefined? this.fixers.length : index, 0, fixer);
+		(self.fixers = self.fixers || [])
+			.splice(index === undefined? self.fixers.length : index, 0, fixer);
 	},
 	
 	fix: function(css, raw) {
-		for(var i=0; i<this.fixers.length; i++) {
-			css = this.fixers[i](css, raw) || css;
+		for(var i=0; i<self.fixers.length; i++) {
+			css = self.fixers[i](css, raw) || css;
 		}
 		
 		return css;
