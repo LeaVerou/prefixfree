@@ -320,7 +320,6 @@ a.download {
 	border-radius: 50%;
 	box-shadow: .1em .2em .4em -.2em black;
 	box-sizing: border-box;
-	-ms-transform: rotate(15deg);
 	transform: rotate(15deg);
 	animation: 3s colorcycle infinite alternate;
 }
