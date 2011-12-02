@@ -158,7 +158,7 @@ var self = window.PrefixFree = {
 			}
 		}
 		
-		fix('functions', '(\\s|:)', '\\s*\\(', '$1' + prefix + '$2(');
+		fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(');
 		fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3');
 		fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:');
 		
