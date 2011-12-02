@@ -159,7 +159,7 @@ var self = window.PrefixFree = {
 		}
 		
 		fix('functions', '(\\s|:)', '\\s*\\(', '$1' + prefix + '$2(');
-		fix('keywords', '(\\s|:)', '(\\s|;|\\}||$)', '$1' + prefix + '$2$3');
+		fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3');
 		fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:');
 		
 		// Prefix properties *inside* values (issue #8)
@@ -199,7 +199,6 @@ var self = window.PrefixFree = {
  **************************************/
 (function() {
 	var prefixes = {},
-		highest = { prefix: '', uses: 0},
 		properties = [],
 		shorthands = {},
 		style = getComputedStyle(document.documentElement, null),
@@ -207,34 +206,29 @@ var self = window.PrefixFree = {
 	
 	// Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
 	var iterate = function(property) {
-		pushUnique(properties, property);
-
-		if(property.indexOf('-') > -1) {
-			var parts = property.split('-');
+		if(property.charAt(0) === '-') {
+			properties.push(property);
 			
-			if(property.charAt(0) === '-') {
-				var prefix = parts[1],
-					uses = ++prefixes[prefix] || 1;
+			var parts = property.split('-'),
+				prefix = parts[1];
 				
-				prefixes[prefix] = uses;
+			// Count prefix uses
+			prefixes[prefix] = ++prefixes[prefix] || 1;
+			
+			// This helps determining shorthands
+			while(parts.length > 3) {
+				parts.pop();
 				
-				if(highest.uses < uses) {
-					highest = {prefix: prefix, uses: uses};
-				}
-				
-				// This helps determining shorthands
-				while(parts.length > 3) {
-					parts.pop();
-					
-					var shorthand = parts.join('-'),
-					    shorthandDOM = StyleFix.camelCase(shorthand);
+				var shorthand = parts.join('-');
 
-					if(shorthandDOM in dummy) {
-						pushUnique(properties, shorthand);
-					}
+				if(supported(shorthand) && properties.indexOf(shorthand) === -1) {
+					properties.push(shorthand);
 				}
 			}
 		}
+	},
+	supported = function(property) {
+		return StyleFix.camelCase(property) in dummy;
 	}
 	
 	// Some browsers have numerical indices for the properties, some don't
@@ -248,11 +242,19 @@ var self = window.PrefixFree = {
 			iterate(StyleFix.deCamelCase(property));
 		}
 	}
+
+	// Find most frequently used prefix
+	var highest = {uses:0};
+	for(var prefix in prefixes) {
+		var uses = prefixes[prefix];
+
+		if(highest.uses < uses) {
+			highest = {prefix: prefix, uses: uses};
+		}
+	}
 	
 	self.prefix = '-' + highest.prefix + '-';
 	self.Prefix = StyleFix.camelCase(self.prefix);
-	
-	properties.sort();
 	
 	self.properties = [];
 
@@ -260,14 +262,10 @@ var self = window.PrefixFree = {
 	for(var i=0; i<properties.length; i++) {
 		var property = properties[i];
 		
-		if(property.charAt(0) !== '-') {
-			break; // it's sorted, so once we get to the first unprefixed property, we're done
-		}
-		
 		if(property.indexOf(self.prefix) === 0) { // we might have multiple prefixes, like Opera
 			var unprefixed = property.slice(self.prefix.length);
 			
-			if(!(StyleFix.camelCase(unprefixed) in dummy)) {
+			if(!supported(unprefixed)) {
 				self.properties.push(unprefixed);
 			}
 		}
@@ -302,9 +300,15 @@ var functions = {
 		property: 'backgroundImage',
 		params: '#foo'
 	}
-},
+};
 
-keywords = {
+
+functions['repeating-linear-gradient'] =
+functions['repeating-radial-gradient'] =
+functions['radial-gradient'] =
+functions['linear-gradient'];
+
+var keywords = {
 	'initial': 'color',
 	'zoom-in': 'cursor',
 	'zoom-out': 'cursor',
@@ -313,17 +317,12 @@ keywords = {
 	'inline-flexbox': 'display'
 };
 
-functions['repeating-linear-gradient'] =
-functions['repeating-radial-gradient'] =
-functions['radial-gradient'] =
-functions['linear-gradient'];
-
 self.functions = [];
 self.keywords = [];
 
 var style = document.createElement('div').style;
 
-function supportsValue(value, property) {
+function supported(value, property) {
 	style[property] = '';
 	style[property] = value;
 
@@ -335,8 +334,8 @@ for (var func in functions) {
 		property = test.property,
 		value = func + '(' + test.params + ')';
 	
-	if (!supportsValue(value, property)
-	  && supportsValue(self.prefix + value, property)) {
+	if (!supported(value, property)
+	  && supported(self.prefix + value, property)) {
 		// It's supported, but with a prefix
 		self.functions.push(func);
 	}
@@ -345,8 +344,8 @@ for (var func in functions) {
 for (var keyword in keywords) {
 	var property = keywords[keyword];
 
-	if (!supportsValue(keyword, property)
-	  && supportsValue(self.prefix + keyword, property)) {
+	if (!supported(keyword, property)
+	  && supported(self.prefix + keyword, property)) {
 		// It's supported, but with a prefix
 		self.keywords.push(keyword);
 	}
@@ -378,7 +377,7 @@ self.atrules = [];
 
 var style = root.appendChild(document.createElement('style'));
 
-function supportsSelector(selector) {
+function supported(selector) {
 	style.textContent = selector + '{}';  // Safari 4 has issues with style.innerHTML
 	
 	return !!style.sheet.cssRules.length;
@@ -387,7 +386,7 @@ function supportsSelector(selector) {
 for(var selector in selectors) {
 	var test = selector + (selectors[selector]? '(' + selectors[selector] + ')' : '');
 		
-	if(!supportsSelector(test) && supportsSelector(self.prefixSelector(test))) {
+	if(!supported(test) && supported(self.prefixSelector(test))) {
 		self.selectors.push(selector);
 	}
 }
@@ -395,7 +394,7 @@ for(var selector in selectors) {
 for(var atrule in atrules) {
 	var test = atrule + ' ' + (atrules[atrule] || '');
 	
-	if(!supportsSelector('@' + test) && supportsSelector('@' + self.prefix + test)) {
+	if(!supported('@' + test) && supported('@' + self.prefix + test)) {
 		self.atrules.push(atrule);
 	}
 }
@@ -414,17 +413,6 @@ self.valueProperties = [
 root.className += ' ' + self.prefix;
 
 StyleFix.register(self.prefixCSS);
-
-/**************************************
- * Utilities
- **************************************/
-
-function pushUnique(arr, val) {
-	if(arr.indexOf(val) === -1) {
-		arr.push(val);
-	}
-}
-
 
 
 })(document.documentElement);
