@@ -38,7 +38,7 @@ var self = window.StyleFix = {
 					// Convert relative URLs to absolute, if needed
 					if(base) {
 						css = css.replace(/url\((?:'|")?(.+?)(?:'|")?\)/gi, function($0, url) {
-							if(!/^([a-z]{3,10}:|\/)/i.test(url)) { // If url not absolute
+							if(!/^([a-z]{3,10}:|\/|#)/i.test(url)) { // If url not absolute & not a hash
 								// May contain sequences like /../ and /./ but those DO work
 								return 'url("' + base + url + '")';
 							}
