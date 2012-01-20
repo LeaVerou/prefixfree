@@ -13,7 +13,7 @@ if(!window.addEventListener) {
 var self = window.StyleFix = {
 	link: function(link) {
 		try {
-			if(!/\bstylesheet\b/i.test(link.rel) || !link.sheet.cssRules) {
+			if(!/^(\s+)?stylesheet(\s+)?$/i.test(link.rel) || !link.sheet.cssRules) {
 				return;
 			}
 		}
@@ -85,7 +85,7 @@ var self = window.StyleFix = {
 	
 	process: function() {
 		// Linked stylesheets
-		$('link[rel~="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
+		$('link[rel="stylesheet"]:not([data-inprogress])').forEach(StyleFix.link);
 		
 		// Inline stylesheets
 		$('style').forEach(StyleFix.styleElement);
@@ -121,7 +121,7 @@ var self = window.StyleFix = {
  **************************************/
 (function(){
 	setTimeout(function(){
-		$('link[rel~="stylesheet"]').forEach(StyleFix.link);
+		$('link[rel="stylesheet"]').forEach(StyleFix.link);
 	}, 10);
 	
 	document.addEventListener('DOMContentLoaded', StyleFix.process, false);
