@@ -14,9 +14,7 @@ var self = window.StyleFix = {
 	link: function(link) {
 		try {
 			// Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets
-			if(link.rel !== 'stylesheet' || !link.sheet.cssRules ||
-				link.getAttribute('data-noprefix') === 'noprefix' ||
-				link.getAttribute('data-noprefix') === 'true') {
+			if(link.rel !== 'stylesheet' || !link.sheet.cssRules || link.hasAttribute('data-noprefix')) {
 				return;
 			}
 		}
