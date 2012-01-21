@@ -13,7 +13,10 @@ if(!window.addEventListener) {
 var self = window.StyleFix = {
 	link: function(link) {
 		try {
-			if(!/^(\s+)?stylesheet(\s+)?$/i.test(link.rel) || !link.sheet.cssRules) {
+			// Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets
+			if(link.rel !== 'stylesheet' || !link.sheet.cssRules ||
+				link.getAttribute('data-noprefix') === 'noprefix' ||
+				link.getAttribute('data-noprefix') === 'true') {
 				return;
 			}
 		}
