@@ -3,7 +3,7 @@
  * @author Lea Verou
  * MIT license
  */
-
+// See enable-cors.org to enable cross-origin stylesheets (for origins/domains you control).
 (function(){
 
 if(!window.addEventListener) {
@@ -14,7 +14,7 @@ var self = window.StyleFix = {
 	link: function(link) {
 		try {
 			// Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets
-			if(link.rel !== 'stylesheet' || !link.sheet.cssRules || link.hasAttribute('data-noprefix')) {
+			if(link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')) {
 				return;
 			}
 		}
