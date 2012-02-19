@@ -1,9 +1,9 @@
 /**
- * StyleFix 1.0.1
+ * StyleFix 1.0.2
  * @author Lea Verou
  * MIT license
  */
-// See enable-cors.org to enable cross-origin stylesheets (for origins/domains you control).
+
 (function(){
 
 if(!window.addEventListener) {
@@ -38,7 +38,7 @@ var self = window.StyleFix = {
 					
 					// Convert relative URLs to absolute, if needed
 					if(base) {
-						css = css.replace(/url\((?:'|")?(.+?)(?:'|")?\)/gi, function($0, url) {
+						css = css.replace(/url\(('?|"?)(.+?)\1\)/gi, function($0, quote, url) {
 							if(!/^([a-z]{3,10}:|\/|#)/i.test(url)) { // If url not absolute & not a hash
 								// May contain sequences like /../ and /./ but those DO work
 								return 'url("' + base + url + '")';
