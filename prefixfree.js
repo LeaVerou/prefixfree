@@ -311,6 +311,8 @@ functions['linear-gradient'];
 
 var keywords = {
 	'initial': 'color',
+	'grab': 'cursor',
+	'grabbing': 'cursor',
 	'zoom-in': 'cursor',
 	'zoom-out': 'cursor',
 	'box': 'display',
