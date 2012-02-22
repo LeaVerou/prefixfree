@@ -26,6 +26,12 @@ var self = window.StyleFix = {
 		    base = url.replace(/[^\/]+$/, ''),
 		    parent = link.parentNode,
 		    xhr = new XMLHttpRequest();
+
+		// Naive fix for issue #49, "Version 1.0.2 breaks when using AdBlock 2.5.19 in webkit"
+		// https://github.com/LeaVerou/prefixfree/issues/49
+		if (url === "data:text/css,") {
+			return;
+		}
 		
 		xhr.open('GET', url);
 
