@@ -38,7 +38,7 @@ var self = window.StyleFix = {
 					
 					// Convert relative URLs to absolute, if needed
 					if(base) {
-						css = css.replace(/url\(('?|"?)(.+?)\1\)/gi, function($0, quote, url) {
+						css = css.replace(/url\(((?:"|')?)(.+?)\1\)/gi, function($0, quote, url) {
 							if(!/^([a-z]{3,10}:|\/|#)/i.test(url)) { // If url not absolute & not a hash
 								// May contain sequences like /../ and /./ but those DO work
 								return 'url("' + base + url + '")';
@@ -46,7 +46,7 @@ var self = window.StyleFix = {
 							
 							return $0;						
 						});
-						
+
 						// behavior URLs shoudn’t be converted (Issue #19)
 						css = css.replace(RegExp('\\b(behavior:\\s*?url\\(\'?"?)' + base, 'gi'), '$1');
 					}
