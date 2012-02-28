@@ -300,6 +300,10 @@ var functions = {
 	'element': {
 		property: 'backgroundImage',
 		params: '#foo'
+	},
+	'cross-fade': {
+		property: 'backgroundImage',
+		params: 'url(a.png), url(b.png), 50%'
 	}
 };
 
