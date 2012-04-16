@@ -42,7 +42,7 @@ var self = window.StyleFix = {
 					
 					// Convert relative URLs to absolute, if needed
 					if(base) {
-						css = css.replace(/url\(((?:"|')?)(.+?)\1\)/gi, function($0, quote, url) {
+						css = css.replace(/url\(\s*?((?:"|')?)(.+?)\1\s*?\)/gi, function($0, quote, url) {
 							if(!/^([a-z]{3,10}:|\/|#)/i.test(url)) { // If url not absolute & not a hash
 								// May contain sequences like /../ and /./ but those DO work
 								return 'url("' + base + url + '")';
@@ -150,7 +150,7 @@ function $(expr, con) {
 })();
 
 /**
- * PrefixFree 1.0.4
+ * PrefixFree 1.0.5
  * @author Lea Verou
  * MIT license
  */
