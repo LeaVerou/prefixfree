@@ -25,12 +25,16 @@ var self = window.StyleFix = {
 		var url = link.href || link.getAttribute('data-href'),
 		    base = url.replace(/[^\/]+$/, ''),
 		    parent = link.parentNode,
-		    xhr = new XMLHttpRequest();
+		    xhr = new XMLHttpRequest(),
+		    process;
 		
-		xhr.open('GET', url);
-
 		xhr.onreadystatechange = function() {
 			if(xhr.readyState === 4) {
+				process();
+			}
+		}
+
+		process = function() {
 				var css = xhr.responseText;
 				
 				if(css && link.parentNode) {
@@ -60,10 +64,21 @@ var self = window.StyleFix = {
 					parent.insertBefore(style, link);
 					parent.removeChild(link);
 				}
-			}
 		};
-		
-		xhr.send(null);
+
+		try {
+			xhr.open('GET', url);
+			xhr.send(null);
+		} catch (e) {
+			// Fallback to XDomainRequest if available
+			if (typeof XDomainRequest != "undefined") {
+				xhr = new XDomainRequest();
+				xhr.onerror = xhr.onprogress = function() {};
+				xhr.onload = process;
+				xhr.open("GET", url);
+				xhr.send(null);
+			}
+		}
 		
 		link.setAttribute('data-inprogress', '');
 	},
