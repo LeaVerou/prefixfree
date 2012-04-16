@@ -32,12 +32,12 @@ var self = window.StyleFix = {
 			if(xhr.readyState === 4) {
 				process();
 			}
-		}
+		};
 
 		process = function() {
 				var css = xhr.responseText;
 				
-				if(css && link.parentNode) {
+				if(css && link.parentNode && (!xhr.status || xhr.status < 400 || xhr.status > 600)) {
 					css = self.fix(css, true, link);
 					
 					// Convert relative URLs to absolute, if needed
