@@ -150,7 +150,7 @@ function $(expr, con) {
 })();
 
 /**
- * PrefixFree 1.0.5
+ * PrefixFree 1.0.6
  * @author Lea Verou
  * MIT license
  */
@@ -160,23 +160,26 @@ if(!window.StyleFix || !window.getComputedStyle) {
 	return;
 }
 
+// Private helper
+function fix(what, before, after, replacement, css) {
+	what = self[what];
+	
+	if(what.length) {
+		var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
+
+		css = css.replace(regex, replacement);
+	}
+	
+	return css;
+}
+
 var self = window.PrefixFree = {
 	prefixCSS: function(css, raw) {
 		var prefix = self.prefix;
 		
-		function fix(what, before, after, replacement) {
-			what = self[what];
-			
-			if(what.length) {
-				var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
-
-				css = css.replace(regex, replacement);
-			}
-		}
-		
-		fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(');
-		fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3');
-		fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:');
+		css = fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(', css);
+		css = fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3', css);
+		css = fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:', css);
 		
 		// Prefix properties *inside* values (issue #8)
 		if (self.properties.length) {
@@ -184,12 +187,12 @@ var self = window.PrefixFree = {
 			
 			fix('valueProperties', '\\b', ':(.+?);', function($0) {
 				return $0.replace(regex, prefix + "$1")
-			});
+			}, css);
 		}
 		
 		if(raw) {
-			fix('selectors', '', '\\b', self.prefixSelector);
-			fix('atrules', '@', '\\b', '@' + prefix + '$1');
+			css = fix('selectors', '', '\\b', self.prefixSelector, css);
+			css = fix('atrules', '@', '\\b', '@' + prefix + '$1', css);
 		}
 		
 		// Fix double prefixing
@@ -198,11 +201,25 @@ var self = window.PrefixFree = {
 		return css;
 	},
 	
-	// Warning: prefixXXX functions prefix no matter what, even if the XXX is supported prefix-less
+	property: function(property) {
+		return (self.properties.indexOf(property)? self.prefix : '') + property;
+	},
+	
+	value: function(value, property) {
+		value = fix('functions', '(^|\\s|,)', '\\s*\\(', '$1' + self.prefix + '$2(', value);
+		value = fix('keywords', '(^|\\s)', '(\\s|$)', '$1' + self.prefix + '$2$3', value);
+		
+		// TODO properties inside values
+		
+		return value;
+	},
+	
+	// Warning: Prefixes no matter what, even if the selector is supported prefix-less
 	prefixSelector: function(selector) {
 		return selector.replace(/^:{1,2}/, function($0) { return $0 + self.prefix })
 	},
 	
+	// Warning: Prefixes no matter what, even if the property is supported prefix-less
 	prefixProperty: function(property, camelCase) {
 		var prefixed = self.prefix + property;
 		
