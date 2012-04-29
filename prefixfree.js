@@ -185,7 +185,7 @@ var self = window.PrefixFree = {
 		if (self.properties.length) {
 			var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
 			
-			fix('valueProperties', '\\b', ':(.+?);', function($0) {
+			css = fix('valueProperties', '\\b', ':(.+?);', function($0) {
 				return $0.replace(regex, prefix + "$1")
 			}, css);
 		}
