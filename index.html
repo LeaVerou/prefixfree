@@ -58,7 +58,7 @@
 	<h1>Limitations</h1>
 	<ul class="drawbacks">
 		<li>Prefixing code in <code>@import</code>-ed files is not supported</li>
-		<li>Prefixing <strong>cross-origin</strong> linked stylesheets is not supported</li>
+		<li>Prefixing <strong>cross-origin</strong> linked stylesheets is not supported, unless they are <a href="http://enable-cors.org/" target="_blank">CORS-enabled</a></li>
 		<li>Unprefixed linked stylesheets won’t work <strong>locally</strong> in Chrome and Opera. <a href="#local-xhr">You can change that for yourself</a> though.</li>
 		<li>Unprefixed <strong>values</strong> in inline styles (in the <code>style</code> attribute) won’t work in IE and Firefox &lt; 3.6. <strong>Properties</strong> as well in Firefox &lt; 3.6.</li>
 	</ul>
@@ -81,8 +81,8 @@
 
 <section id="browser-support">
 	<h1>Browser support</h1>
-	<p>The target browser support is <strong>IE9+</strong>, <strong>Opera 10+</strong>, <strong>Firefox 3.5+</strong>, <strong>Safari 4+</strong> and <strong>Chrome</strong>.</p>
-	<p>If it doesn’t work in any of those, it’s a bug so please report it. Just before you do, please make sure that it’s not because the browser doesn’t support a CSS3 feature at all, even with a prefix.</p>
+	<p>The target browser support is <strong>IE9+</strong>, <strong>Opera 10+</strong>, <strong>Firefox 3.5+</strong>, <strong>Safari 4+</strong> and <strong>Chrome</strong> on desktop and <strong>Mobile Safari</strong>, <strong>Android browser</strong>, <strong>Chrome</strong> and <strong>Opera Mobile</strong> on mobile.</p>
+	<p>If it doesn’t work in any of those, it’s a bug so please <a href="https://github.com/LeaVerou/prefixfree/issues">report it</a>. Just before you do, please make sure that it’s not because the browser doesn’t support a CSS3 feature at all, even with a prefix.</p>
 	<p>In older browsers like IE8, nothing will break, just properties won’t get prefixed. Which wouldn’t be useful anyway as IE8 doesn’t support much CSS3 ;)</p>
 </section>
 
