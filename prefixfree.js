@@ -84,6 +84,9 @@ var self = window.StyleFix = {
 	},
 
 	styleElement: function(style) {
+		if (style.hasAttribute('data-noprefix')) {
+			return;
+		}
 		var disabled = style.disabled;
 		
 		style.textContent = self.fix(style.textContent, true, style);
