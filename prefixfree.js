@@ -63,6 +63,8 @@ var self = window.StyleFix = {
 					
 					parent.insertBefore(style, link);
 					parent.removeChild(link);
+					
+					style.media = link.media;
 				}
 		};
 
