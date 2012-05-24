@@ -64,7 +64,7 @@ var self = window.StyleFix = {
 					parent.insertBefore(style, link);
 					parent.removeChild(link);
 					
-					style.media = link.media;
+					style.media = link.media; // Duplicate is intentional. See issue #31
 				}
 		};
 
@@ -356,7 +356,9 @@ var keywords = {
 	'zoom-out': 'cursor',
 	'box': 'display',
 	'flexbox': 'display',
-	'inline-flexbox': 'display'
+	'inline-flexbox': 'display',
+	'flex': 'display',
+	'inline-flex': 'display'
 };
 
 self.functions = [];
