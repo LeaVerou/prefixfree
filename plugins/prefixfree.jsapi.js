@@ -21,15 +21,18 @@
  *
  */
 
+ /* Author Dmitry Baranovskiy */
+
 (function (self) {
-	var prefix = self.Prefix.charAt().toLowerCase() + self.Prefix.substring(1);
+	var prefix = self.Prefix.toLowerCase(),
+		prefixrg = new RegExp("^" + prefix, "i");
 	function extend(ob) {
-		for(var name in ob) {
-			if (!name.indexOf(prefix)) {
+		for (var name in ob) {
+			if (~name.search(prefixrg)) {
 				ob[name.charAt(prefix.length).toLowerCase() + name.substring(prefix.length + 1)] = ob[name];
 			}
 		}
-		if(ob.addEventListener) {
+		if (ob.addEventListener) {
 			(function (add, remove) {
 				ob.addEventListener = function (name, handler, bubble) {
 					add.call(this, name, handler, bubble);
@@ -43,6 +46,7 @@
 		}
 	}
 
+	// This function digs through the objects in order to find out which have prefixed methods and therefore, which need to be extended.
 	function dig(o, namerg) {
 		var os = [],
 			out;
