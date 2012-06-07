@@ -54,18 +54,29 @@ if(!self) {
 if(window.CSSStyleDeclaration) {
 	for(var i=0; i<self.properties.length; i++) {
 		var property = StyleFix.camelCase(self.properties[i]),
-		    prefixed = self.prefixProperty(property),
+		    prefixed = self.prefixProperty(property, true),
 		    proto = CSSStyleDeclaration.prototype,
-		    getter = (function(prefixed) {
-		    	return function() {
-		    		return this[prefixed];
-		    	}
-		    })(prefixed),
-		    setter = (function(prefixed) {
-		    	return function(value) {
-		    		this[prefixed] = value;
-		    	}
-		    })(prefixed);
+		    getter,
+		    setter;
+
+		// Lowercase prefix for IE
+		if(!(prefixed in proto)) {
+			prefixed = prefixed.charAt(0).toLowerCase() + prefixed.slice(1);
+			if(!(prefixed in proto)) {
+				continue;
+			}
+		}
+
+		getter = (function(prefixed) {
+			return function() {
+				return this[prefixed];
+			}
+		})(prefixed);
+		setter = (function(prefixed) {
+			return function(value) {
+				this[prefixed] = value;
+			}
+		})(prefixed);
 
 		if(Object.defineProperty) {
 			Object.defineProperty(proto, property, {
