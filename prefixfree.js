@@ -52,8 +52,10 @@ var self = window.StyleFix = {
 						});
 
 						// behavior URLs shoudn’t be converted (Issue #19)
-						css = css.replace(RegExp('\\b(behavior:\\s*?url\\(\'?"?)' + base, 'gi'), '$1');
-					}
+						// base should be escaped before added to RegExp (Issue #81)
+						var escaped_base = base.replace(/([\\\^\$*+[\]?{}.=!:(|)])/g,"\\$1");
+						css = css.replace(RegExp('\\b(behavior:\\s*?url\\(\'?"?)' + escaped_base, 'gi'), '$1');
+						}
 					
 					var style = document.createElement('style');
 					style.textContent = css;
