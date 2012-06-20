@@ -1,5 +1,5 @@
 /**
- * StyleFix 1.0.2
+ * StyleFix 1.0.3
  * @author Lea Verou
  * MIT license
  */
