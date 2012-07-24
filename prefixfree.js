@@ -179,7 +179,7 @@ function fix(what, before, after, replacement, css) {
 }
 
 var self = window.PrefixFree = {
-	prefixCSS: function(css, raw) {
+	prefixCSS: function(css, raw, element) {
 		var prefix = self.prefix;
 		
 		css = fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(', css);
@@ -202,6 +202,18 @@ var self = window.PrefixFree = {
 		
 		// Fix double prefixing
 		css = css.replace(RegExp('-' + prefix, 'g'), '-');
+		
+		// Prefix wildcard
+		css = css.replace(/-\*-(?=[a-z]+)/gi, self.prefix);
+		
+		// Gradient angles hotfix
+		if(false && self.functions.indexOf('linear-gradient')) {
+			// Gradients are supported with a prefix, convert angles to legacy
+			css = css.replace(/(\s|:|,)(repeating-)?linear-gradient\(\s*(-?\d*\.?\d*)deg/ig, function (angle) {
+				console.log(arguments);
+				return angle;
+			});
+		}
 		
 		return css;
 	},
