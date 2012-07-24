@@ -1,5 +1,5 @@
 /**
- * StyleFix 1.0.3 & PrefixFree 1.0.6
+ * StyleFix 1.0.3 & PrefixFree 1.0.7
  * @author Lea Verou
  * MIT license
  */
@@ -182,6 +182,16 @@ var self = window.PrefixFree = {
 	prefixCSS: function(css, raw, element) {
 		var prefix = self.prefix;
 		
+		// Gradient angles hotfix
+		if(self.functions.indexOf('linear-gradient') > -1) {
+			// Gradients are supported with a prefix, convert angles to legacy
+			css = css.replace(/(\s|:|,)(repeating-)?linear-gradient\(\s*(-?\d*\.?\d*)deg/ig, function ($0, delim, repeating, deg) {
+				deg = Math.abs(deg - 450) % 360;
+
+				return delim + (repeating || '') + 'linear-gradient(' + deg + 'deg';
+			});
+		}
+		
 		css = fix('functions', '(\\s|:|,)', '\\s*\\(', '$1' + prefix + '$2(', css);
 		css = fix('keywords', '(\\s|:)', '(\\s|;|\\}|$)', '$1' + prefix + '$2$3', css);
 		css = fix('properties', '(^|\\{|\\s|;)', '\\s*:', '$1' + prefix + '$2:', css);
@@ -205,15 +215,6 @@ var self = window.PrefixFree = {
 		
 		// Prefix wildcard
 		css = css.replace(/-\*-(?=[a-z]+)/gi, self.prefix);
-		
-		// Gradient angles hotfix
-		if(false && self.functions.indexOf('linear-gradient')) {
-			// Gradients are supported with a prefix, convert angles to legacy
-			css = css.replace(/(\s|:|,)(repeating-)?linear-gradient\(\s*(-?\d*\.?\d*)deg/ig, function (angle) {
-				console.log(arguments);
-				return angle;
-			});
-		}
 		
 		return css;
 	},

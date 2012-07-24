@@ -55,8 +55,8 @@ ul.drawbacks > li:before {
 
 html {
 	background-color: slategray;
-	background-image: linear-gradient(0deg, transparent 50%, white 50%),
-		repeating-linear-gradient(30deg, rgba(255,255,255,.15), rgba(255,255,255,.15) 40px, transparent 40px, transparent 80px);
+	background-image: linear-gradient(90deg, transparent 50%, white 50%),
+		repeating-linear-gradient(60deg, rgba(255,255,255,.15), rgba(255,255,255,.15) 40px, transparent 40px, transparent 80px);
 }
 
 body {
@@ -66,7 +66,7 @@ body {
 	margin: auto;
 	background: url(../img/noise.png) white;
 	background: url(../img/raisedfist.png) bottom right no-repeat,
-		linear-gradient(0, rgba(255,255,255,0) 10%, white),
+		linear-gradient(90deg, rgba(255,255,255,0) 10%, white),
 		url(../img/noise.png) white;
 	font: 100%/1.6 Arvo, sans-serif;
 	text-shadow: 0 1px white;
@@ -149,7 +149,7 @@ nav {
 	margin: 1em 0 1em -3em;
 	font-size: 160%;
 	background: #111;
-	background: linear-gradient(0, #444, black 50%);
+	background: linear-gradient(90deg, #444, black 50%);
 	color: rgba(255,255,255,.5);
 	text-align: right;
 	text-shadow: none;
