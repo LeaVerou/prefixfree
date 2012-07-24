@@ -239,9 +239,19 @@ var self = window.PrefixFree = {
 	
 	// Warning: Prefixes no matter what, even if the property is supported prefix-less
 	prefixProperty: function(property, camelCase) {
-		var prefixed = self.prefix + property;
-		
-		return camelCase? StyleFix.camelCase(prefixed) : prefixed;
+		var dashPrefixed = self.prefix + property;
+		if (camelCase) {
+			// Some browsers use lowercase prefixes in the camelCased property names, so we check
+			// for both. Uppercase prefixes are favored as they are the right way (R) to do it
+			var upperPrefixed = StyleFix.camelCase(dashPrefixed),
+				lowerPrefixed = StyleFix.camelCase(dashPrefixed.substr(1));
+			if (upperPrefixed in document.documentElement.style) {
+				return upperPrefixed;
+			}
+			return lowerPrefixed;
+		} else {
+			return dashPrefixed;
+		}
 	}
 };
 
