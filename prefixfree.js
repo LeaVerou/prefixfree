@@ -1,5 +1,5 @@
 /**
- * StyleFix 1.0.3
+ * StyleFix 1.0.3 & PrefixFree 1.0.6
  * @author Lea Verou
  * MIT license
  */
@@ -122,9 +122,9 @@ var self = window.StyleFix = {
 			.splice(index === undefined? self.fixers.length : index, 0, fixer);
 	},
 	
-	fix: function(css, raw) {
+	fix: function(css, raw, element) {
 		for(var i=0; i<self.fixers.length; i++) {
-			css = self.fixers[i](css, raw) || css;
+			css = self.fixers[i](css, raw, element) || css;
 		}
 		
 		return css;
@@ -157,11 +157,9 @@ function $(expr, con) {
 })();
 
 /**
- * PrefixFree 1.0.6
- * @author Lea Verou
- * MIT license
+ * PrefixFree
  */
-(function(root, undefined){
+(function(root){
 
 if(!window.StyleFix || !window.getComputedStyle) {
 	return;
