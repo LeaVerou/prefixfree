@@ -45,7 +45,7 @@ var self = window.StyleFix = {
 						css = css.replace(/url\(\s*?((?:"|')?)(.+?)\1\s*?\)/gi, function($0, quote, url) {
 							if(!/^([a-z]{3,10}:|\/|#)/i.test(url)) { // If url not absolute & not a hash
 								// May contain sequences like /../ and /./ but those DO work
-								return 'url("' + base + url + '")'.replace(/["]{2,}/g, "\"");
+								return 'url("' + base + url + '")';
 							}
 							
 							return $0;						
