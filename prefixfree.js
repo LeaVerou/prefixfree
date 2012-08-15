@@ -186,9 +186,7 @@ var self = window.PrefixFree = {
 		if(self.functions.indexOf('linear-gradient') > -1) {
 			// Gradients are supported with a prefix, convert angles to legacy
 			css = css.replace(/(\s|:|,)(repeating-)?linear-gradient\(\s*(-?\d*\.?\d*)deg/ig, function ($0, delim, repeating, deg) {
-				deg = Math.abs(deg - 450) % 360;
-
-				return delim + (repeating || '') + 'linear-gradient(' + deg + 'deg';
+				return delim + (repeating || '') + 'linear-gradient(' + (90-deg) + 'deg';
 			});
 		}
 		
