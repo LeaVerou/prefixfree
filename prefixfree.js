@@ -62,6 +62,7 @@ var self = window.StyleFix = {
 					style.media = link.media;
 					style.disabled = link.disabled;
 					style.setAttribute('data-href', link.getAttribute('href'));
+					style.setAttribute('data-prefixed', '');
 					
 					parent.insertBefore(style, link);
 					parent.removeChild(link);
@@ -94,6 +95,7 @@ var self = window.StyleFix = {
 		var disabled = style.disabled;
 		
 		style.textContent = self.fix(style.textContent, true, style);
+		style.setAttribute('data-prefixed', '');
 		
 		style.disabled = disabled;
 	},
@@ -104,6 +106,7 @@ var self = window.StyleFix = {
 		css = self.fix(css, false, element);
 		
 		element.setAttribute('style', css);
+		element.setAttribute('data-prefixed', '');
 	},
 	
 	process: function() {
@@ -148,6 +151,39 @@ var self = window.StyleFix = {
 	}, 10);
 	
 	document.addEventListener('DOMContentLoaded', StyleFix.process, false);
+	
+	// IE9 has a bug with @media rules in print. See issue #109.
+	if (navigator.userAgent.indexOf('MSIE 9') != -1) {
+		var encodeURICharacter = function(character) {
+			return '%' + character.charCodeAt().toString(16);
+		};
+		var encodeURIData = function(data) {
+			// Be extra strict: Adhere to RFC 3986 which reserves !'()*.
+			// Parens are especially important as they can confuse parsers:
+			// @import url("data:...)...");
+			return encodeURIComponent(data).replace(/[!'()*]/g, encodeURICharacter);
+		};
+		var createCSSDataURI = function(css) {
+			// Use the document's charset for stylesheets.
+			// Technically this can be incorrect since external stylesheets 
+			// could have distinct encodings, but StyleFix.link() implicitly 
+			// assumes that this is not the case when it transforms linked 
+			// stylesheets into <style> elements.
+			return 'data:text/css;charset=' + document.characterSet + ',' + encodeURIData(css);
+		};
+		var beforePrintListener = function() {
+			var prefixedStyleElements = document.querySelectorAll('style[data-prefixed]');
+			Array.prototype.forEach.call(prefixedStyleElements, function(styleElement) {
+				styleElement.textContent = 
+					'/* @importing a data URI magically solves an IE9 print media bug. See issue #109 <http://git.io/p7-ExQ>. */ \n' +
+					'@import url("' + createCSSDataURI(styleElement.textContent) + '");'
+				;
+			});
+			// Only do this once!
+			window.removeEventListener('beforeprint', beforePrintListener, false);
+		};
+		window.addEventListener('beforeprint', beforePrintListener, false);
+	}
 })();
 
 function $(expr, con) {
