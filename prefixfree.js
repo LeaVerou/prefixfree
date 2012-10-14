@@ -171,18 +171,27 @@ var self = window.StyleFix = {
 			// stylesheets into <style> elements.
 			return 'data:text/css;charset=' + document.characterSet + ',' + encodeURIData(css);
 		};
-		var beforePrintListener = function() {
-			var prefixedStyleElements = document.querySelectorAll('style[data-prefixed]');
-			Array.prototype.forEach.call(prefixedStyleElements, function(styleElement) {
+		
+		window.addEventListener('beforeprint', function() {
+			$('style[data-prefixed]:not([data-importeddatauri])').forEach(function(styleElement) {
+				styleElement.beforeBeforePrintTextContent = styleElement.textContent;
 				styleElement.textContent = 
-					'/* @importing a data URI magically solves an IE9 print media bug. See issue #109 <http://git.io/p7-ExQ>. */ \n' +
+					'/* @importing a data URI magically solves an IE9 print media bug. See -prefix-free issue #109 <http://git.io/p7-ExQ>. */ \n' +
 					'@import url("' + createCSSDataURI(styleElement.textContent) + '");'
 				;
+				styleElement.setAttribute('data-importeddatauri', '');
 			});
-			// Only do this once!
-			window.removeEventListener('beforeprint', beforePrintListener, false);
-		};
-		window.addEventListener('beforeprint', beforePrintListener, false);
+		}, false);
+		
+		// Restore the original prefixed CSS once it's safe.
+		window.addEventListener('afterprint', function() {
+			$('style[data-prefixed][data-importeddatauri]').forEach(function(styleElement) {
+				if(styleElement.beforeBeforePrintTextContent) {
+					styleElement.textContent = styleElement.beforeBeforePrintTextContent;
+					styleElement.removeAttribute('data-importeddatauri');
+				}
+			});
+		}, false);
 	}
 })();
 
