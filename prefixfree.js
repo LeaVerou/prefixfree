@@ -218,7 +218,7 @@ var self = window.PrefixFree = {
 	},
 	
 	property: function(property) {
-		return (self.properties.indexOf(property)? self.prefix : '') + property;
+		return (self.properties.indexOf(property) !== -1 ? self.prefix : '') + property;
 	},
 	
 	value: function(value, property) {
