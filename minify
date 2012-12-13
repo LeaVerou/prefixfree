@@ -1,0 +1,11 @@
+#!/bin/bash
+(
+    echo '/**
+ * StyleFix 1.0.3 & PrefixFree 1.0.7
+ * @author Lea Verou
+ * MIT license
+ */'
+    curl --data-urlencode 'js_code@prefixfree.js' \
+         --data 'output_info=compiled_code' \
+         http://closure-compiler.appspot.com/compile
+) > prefixfree.min.js
