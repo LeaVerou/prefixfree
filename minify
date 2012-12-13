@@ -1,0 +1,7 @@
+#!/bin/bash
+(
+    head -n 5 prefixfree.js
+    curl --data-urlencode 'js_code@prefixfree.js' \
+         --data 'output_info=compiled_code' \
+         http://closure-compiler.appspot.com/compile
+) > prefixfree.min.js
