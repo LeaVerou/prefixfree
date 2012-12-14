@@ -76,7 +76,11 @@ var self = window.StyleFix = {
 					style.media = link.media;
 					style.disabled = link.disabled;
 					style.setAttribute('data-href', link.getAttribute('href'));
-					
+
+					if(link.hasAttribute('id')) {
+						style.setAttribute('id', link.getAttribute('id'));
+					}
+
 					parent.insertBefore(style, link);
 					parent.removeChild(link);
 					
