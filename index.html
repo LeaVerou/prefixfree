@@ -195,6 +195,31 @@
 			<li><a href="https://raw.github.com/LeaVerou/prefixfree/gh-pages/plugins/prefixfree.jquery.js">prefixfree.jquery.js</a></li>
 		</ul>
 	</section>
+	
+	<section id="viewport-units">
+		<h1>Viewport-relative units</h1>
+		<p>A static polyfill for the new vw, vh, vmin, vmax units. Static means it won’t update when the window is resized, but only on load.</p>
+		<ul>
+			<li><a href="https://raw.github.com/LeaVerou/prefixfree/gh-pages/plugins/prefixfree.viewport-units.js">prefixfree.viewport-units.js</a></li>
+		</ul>
+	</section>
+	
+	<section id="viewport-units">
+		<h1>CSS Variables</h1>
+		<p>Enables rudimentary CSS variable support.</p>
+		<ul class="features">
+			<li>If a prefixed implementation is available, it will add the necessary prefixes and use that</li>
+			<li>It supports overwriting the variable value</li>
+		</ul>
+		Limitations:
+		<ul class="drawbacks">
+			<li>Doesn’t support scoping. Every variable is in the global scope and every subsequent declaration of the same variable overwrites the previous ones, regardless of scoping</li>
+			<li>It’s not dynamic. Variables are replaced once, and then they function as normal CSS values</li>
+		</ul>
+		<ul>
+			<li><a href="https://raw.github.com/LeaVerou/prefixfree/gh-pages/plugins/prefixfree.viewport-units.js">prefixfree.viewport-units.js</a></li>
+		</ul>
+	</section>
 </section>
 
 <footer>
