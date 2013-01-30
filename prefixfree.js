@@ -4,6 +4,8 @@
  * MIT license
  */
 (function () {
+	'use strict';
+
 	var self, $;
 	
 	if (!window.addEventListener) {
@@ -156,11 +158,11 @@
 		},
 		
 		camelCase: function(str) {
-			return str.replace(/-([a-z])/g, function($0, $1) { return $1.toUpperCase(); }).replace('-','');
+			return str.replace(/-([a-z])/g, function(match, p1) { return p1.toUpperCase(); }).replace('-','');
 		},
 		
 		deCamelCase: function(str) {
-			return str.replace(/[A-Z]/g, function($0) { return '-' + $0.toLowerCase() });
+			return str.replace(/[A-Z]/g, function(match) { return '-' + match.toLowerCase() });
 		}
 	};
 
@@ -257,17 +259,13 @@
 
 	// Properties
 	(function() {
-		var prefixes = {},
-			properties = [],
-			shorthands = {},
-			style = getComputedStyle(document.documentElement, null),
+		var properties = [],
 			dummy = document.createElement('div').style,
-			i,
 			property,
 			prefix,
-			uses,
-			highest,
-			unprefixed;
+			iterateVendorProperties,
+			vendorPrefix,
+			isSupported;
 		
 		// @see http://jsperf.com/for-vs-foreach/57
 		each = (function () {
@@ -311,77 +309,65 @@
 			}
 		}());
 		
-		// Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
-		// @todo Fix iteration
-		var iterate = function (property) {
-			var parts,
+		/**
+		 * The original implementation suggestion (http://lea.verou.me/2009/02/find-the-vendor-prefix-of-the-current-browser/)
+		 * does not properly handle case sensitiviy, e.g. Chrome is using webkit, while Opera is using Webkit.
+		 * @returns {String} Most frequently appearing prefix.
+		 */
+		iterateVendorProperties = function (callback) {
+			var styles = document.createElement('div').style,
+				property,
+				properties = [],
+				match = /^([a-zA-Z][a-z]*)/,
 				prefix,
-				shorthand;
-		
-			if (property.charAt(0) === '-') {
-				properties.push(property);
-				
-				parts = property.split('-');
-				prefix = parts[1];
+				vendorPrefix = {name: undefined, count: 0},
+				vendorPrefixes = {webkit: 0, moz: 0, o: 0, ms: 0, khtml: 0},
+				matches = [];
+			
+			for (property in styles) {
+				prefix = property.match(match)[0].toLowerCase();
+				if (vendorPrefixes[prefix] !== undefined) {
+					vendorPrefixes[prefix]++;
 					
-				// Count prefix uses
-				prefixes[prefix] = ++prefixes[prefix] || 1;
-				
-				// This helps determining shorthands
-				while (parts.length > 3) {
-					parts.pop();
-					
-					shorthand = parts.join('-');
-	
-					if (supported(shorthand) && properties.indexOf(shorthand) === -1) {
-						properties.push(shorthand);
-					}
+					callback(property);
 				}
 			}
-		},
-		supported = function(property) {
+			
+			each(vendorPrefixes, function (count, name) {
+				if (count !== 0 && vendorPrefix.count < count) {
+					vendorPrefix.name = name;
+					vendorPrefix.count = count;
+				}
+			});
+			
+			return vendorPrefix.name;
+		};
+		
+		vendorPrefix = iterateVendorProperties(function (property) {
+			properties.push(StyleFix.deCamelCase( property.charAt(0).toUpperCase() + property.substr(1) )); // @todo investigate case inconsistency
+		});
+		
+		isSupported = function(property) {
 			return StyleFix.camelCase(property) in dummy;
-		}
+		};
 		
-		// Some browsers have numerical indices for the properties, some don't
-		if (style.length > 0) {
-			for (i = 0; i < style.length; i++) {
-				iterate(style[i])
-			}
-		} else {
-			for (property in style) {
-				iterate(StyleFix.deCamelCase(property));
-			}
-		}
-	
-		// Find most frequently used prefix
-		highest = {uses: 0};
-		
-		for (prefix in prefixes) {
-			uses = prefixes[prefix];
-	
-			if (highest.uses < uses) {
-				highest = {prefix: prefix, uses: uses};
-			}
-		}
-		
-		self.prefix = '-' + highest.prefix + '-';
+		self.prefix = '-' + vendorPrefix + '-';
 		self.Prefix = StyleFix.camelCase(self.prefix);
 		
 		self.properties = [];
-	
+		
 		// Get properties ONLY supported with a prefix
-		for(i = 0; i < properties.length; i++) {
-			property = properties[i];
+		each(properties, function (property) {
+			var unprefixed;
 			
 			if (property.indexOf(self.prefix) === 0) { // we might have multiple prefixes, like Opera
 				unprefixed = property.slice(self.prefix.length);
 				
-				if (!supported(unprefixed)) {
+				if (!isSupported(unprefixed)) {
 					self.properties.push(unprefixed);
 				}
 			}
-		}
+		});
 		
 		// IE fix
 		if (self.Prefix == 'Ms' && !('transform' in dummy) && !('MsTransform' in dummy) && ('msTransform' in dummy)) {
@@ -448,25 +434,22 @@
 			return !!style[property];
 		}
 		
-		for (func in functions) {
-			test = functions[func];
-			property = test.property;
-			value = func + '(' + test.params + ')';
+		each(functions, function (test, func) {
+			var property = test.property,
+			    value = func + '(' + test.params + ')';
 			
 			if (!supported(value, property) && supported(self.prefix + value, property)) {
 				// It's supported, but with a prefix
 				self.functions.push(func);
 			}
-		}
+		});
 		
-		for (keyword in keywords) {
-			property = keywords[keyword];
-		
+		each(keywords, function (property, keyword) {
 			if (!supported(keyword, property) && supported(self.prefix + keyword, property)) {
 				// It's supported, but with a prefix
 				self.keywords.push(keyword);
 			}
-		}
+		});
 	})();
 	
 	// selectors and at-rules
