@@ -386,8 +386,16 @@
 			func,
 			test,
 			property,
-			value;
-	
+			value,
+			isSupported;
+			
+		isSupported = function (value, property) {
+			style[property] = '';
+			style[property] = value;
+		
+			return style[property];
+		};
+			
 		// Values that might need prefixing
 		functions = {
 			'linear-gradient': {
@@ -427,30 +435,23 @@
 		
 		style = document.createElement('div').style;
 		
-		function supported(value, property) {
-			style[property] = '';
-			style[property] = value;
-		
-			return !!style[property];
-		}
-		
 		each(functions, function (test, func) {
 			var property = test.property,
 			    value = func + '(' + test.params + ')';
 			
-			if (!supported(value, property) && supported(self.prefix + value, property)) {
+			if (!isSupported(value, property) && isSupported(self.prefix + value, property)) {
 				// It's supported, but with a prefix
 				self.functions.push(func);
 			}
 		});
 		
 		each(keywords, function (property, keyword) {
-			if (!supported(keyword, property) && supported(self.prefix + keyword, property)) {
+			if (!isSupported(keyword, property) && isSupported(self.prefix + keyword, property)) {
 				// It's supported, but with a prefix
 				self.keywords.push(keyword);
 			}
 		});
-	})();
+	}());
 	
 	// selectors and at-rules
 	(function () {
