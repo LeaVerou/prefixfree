@@ -269,6 +269,48 @@
 			highest,
 			unprefixed;
 		
+		// @see http://jsperf.com/for-vs-foreach/57
+		each = (function () {
+			var toString = Object.prototype.toString;
+		
+			function isArray(obj) {
+				return toString.call(obj) === '[object Array]';
+			}
+			
+			function isObject(obj) {
+				return toString.call(obj) === '[object Object]';
+			}
+			
+			function isString(obj) {
+				return toString.call(obj) === '[object String]';
+			}
+			
+			return function (obj, iterator) {
+				var key, length;
+				if (!obj) {
+					return;
+				}
+				length = obj.length;
+				if (isArray(obj) || isString(obj)) {
+					for(key = 0; key < length; key += 1) {
+						iterator(obj[key], key, obj);
+					}
+					return obj;
+				}
+				
+				if (isObject(obj)) {
+					for (key in obj) {
+						if (obj.hasOwnProperty(key)) {
+							iterator(obj[key], key, obj);
+						}
+					}
+					return obj;
+				}
+				
+				return obj;
+			}
+		}());
+		
 		// Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
 		// @todo Fix iteration
 		var iterate = function (property) {
@@ -427,56 +469,59 @@
 		}
 	})();
 	
-	// Selectors and @-rules
+	// selectors and at-rules
 	(function () {
 		var selectors,
-			atrules,
-			style,
-			selector,
-			atrule,
-			test;
+			atRules,
+			styleElm,
+			isAtRuleSupported,
+			isSelectorSupported;
 		
-		selectors = {
-			':read-only': null,
-			':read-write': null,
-			':any-link': null,
-			'::selection': null
-		},
-		
-		atrules = {
-			'keyframes': 'name',
-			'viewport': null,
-			'document': 'regexp(".")'
-		};
+		styleElm = document.head.appendChild(document.createElement('style'));
 		
 		self.selectors = [];
 		self.atrules = [];
 		
-		style = root.appendChild(document.createElement('style'));
-		
-		function supported(selector) {
-			style.textContent = selector + '{}';  // Safari 4 has issues with style.innerHTML
+		isSelectorSupported = function (selector) {			
+			// querySelector suppost is IE8+
+			if (document.querySelector) {
+				return false;
+			}
 			
-			return !!style.sheet.cssRules.length;
-		}
+			try {
+				document.querySelector(selector + '{}');
+				return true;
+			} catch (e) {
+				return false;
+			}
+		};
 		
-		for (selector in selectors) {
-			test = selector + (selectors[selector] ? '(' + selectors[selector] + ')' : '');
-				
-			if(!supported(test) && supported(self.prefixSelector(test))) {
+		isAtRuleSupported = function (rule) {
+			styleElm.textContent = rule + '{}';
+			
+			return styleElm.sheet.cssRules.length;
+		};
+		
+		// @note that since v 1.0.7 this removes the superflous (based on the hard-coded values) property argument. If needed, readd following the atRules suit.
+		// @note :any-link is likely to be renamed (http://dev.w3.org/csswg/selectors4/#the-any-link-pseudo)
+		// @todo add CSS4 selectors (http://en.wikipedia.org/wiki/Comparison_of_layout_engines_(Cascading_Style_Sheets))
+		selectors = [ ':read-only', ':read-write', ':optional', ':required', ':out-of-range', ':in-range', ':invalid', ':valid', ':default', ':indeterminate', ':any-link', /* pseudo-elements */ '::marker', '::selection' ];
+		// @todo add support for @supports, @phonetic-alphabet, @region and @counter-style
+		atRules = [ ['keyframes', 'keyframes foobar'], ['viewport', 'viewport'], ['document', 'document url(http://leaverou.github.com/prefixfree/)'] ];
+		
+		each(selectors, function (selector) {
+			if (!isSelectorSupported(selector) && isSelectorSupported(self.prefixSelector(selector))) {
 				self.selectors.push(selector);
 			}
-		}
+		});
 		
-		for (atrule in atrules) {
-			test = atrule + ' ' + (atrules[atrule] || '');
-			
-			if(!supported('@' + test) && supported('@' + self.prefix + test)) {
-				self.atrules.push(atrule);
+		each(atRules, function (rule) {
+			if (!isAtRuleSupported('@' + rule[1]) && isAtRuleSupported('@' + self.prefix + rule[1])) {
+				self.atrules.push(rule[0]);
 			}
-		}
+		});
 		
-		root.removeChild(style);
+		document.head.removeChild(styleElm);
 	}());
 
 	// Properties that accept properties as their value
@@ -486,4 +531,8 @@
 	root.className += ' ' + self.prefix;
 	
 	StyleFix.register(self.prefixCSS);
+	
+	function forEach () {
+		
+	}
 })(document.documentElement);
