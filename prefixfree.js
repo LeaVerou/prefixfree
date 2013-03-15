@@ -383,7 +383,9 @@ var keywords = {
 	'flexbox': 'display',
 	'inline-flexbox': 'display',
 	'flex': 'display',
-	'inline-flex': 'display'
+	'inline-flex': 'display',
+	'grid': 'display',
+	'inline-grid': 'display'
 };
 
 self.functions = [];
