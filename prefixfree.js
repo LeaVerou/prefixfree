@@ -375,6 +375,8 @@ functions['repeating-radial-gradient'] =
 functions['radial-gradient'] =
 functions['linear-gradient'];
 
+// Note: The properties assigned are just to *test* support. 
+// The keywords will be prefixed everywhere.
 var keywords = {
 	'initial': 'color',
 	'zoom-in': 'cursor',
@@ -385,7 +387,8 @@ var keywords = {
 	'flex': 'display',
 	'inline-flex': 'display',
 	'grid': 'display',
-	'inline-grid': 'display'
+	'inline-grid': 'display',
+	'min-content': 'width'
 };
 
 self.functions = [];
