@@ -139,6 +139,13 @@
 		<p>Please note that in unsupported browsers like IE8, no such class will be added.</p>
 	</section>
 	
+
+	<section>
+		<h1>How do I exclude specific files from being prefixed?</h1>
+		<p>You can exclude a file from being prefixed by adding the <code>data-noprefix</code> attribute to the <code>&lt;link&gt;</code> or <code>&lt;style&gt;</code> element. For example:</p>
+		<pre>&lt;link href=&quot;//example.com/style.css&quot; rel=&quot;stylesheet&quot; type=&quot;text/css&quot; data-noprefix&gt;</pre>
+	</section>
+
 	<section id="local-xhr">
 		<h1>How do I enable local testing?</h1>
 		<p>Firefox (and IE?) natively support local XHR, so -prefix-free will work fine locally with them.</p>
