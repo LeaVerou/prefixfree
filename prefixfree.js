@@ -38,10 +38,12 @@ var self = window.StyleFix = {
 		};
 
 		process = function() {
-				var css = xhr.responseText;
+				var text = xhr.responseText;
 				
-				if(css && link.parentNode && (!xhr.status || xhr.status < 400 || xhr.status > 600)) {
-					css = self.fix(css, true, link);
+				if(text && link.parentNode && (!xhr.status || xhr.status < 400 || xhr.status > 600)) {
+					css = self.fix(text, true, link);
+					if (css == text)
+						return;
 					
 					// Convert relative URLs to absolute, if needed
 					if(base) {
@@ -107,17 +109,19 @@ var self = window.StyleFix = {
 		}
 		var disabled = style.disabled;
 		
-		style.textContent = self.fix(style.textContent, true, style);
+		var text = style.textContent;
+		var css = self.fix(text, true, style);
+		if (css != text)
+			style.textContent = css;
 		
 		style.disabled = disabled;
 	},
 
 	styleAttribute: function(element) {
-		var css = element.getAttribute('style');
-		
-		css = self.fix(css, false, element);
-		
-		element.setAttribute('style', css);
+		var text = element.getAttribute('style');
+		vas css = self.fix(text, false, element);
+		if (css != text)
+			element.setAttribute('style', css);
 	},
 	
 	process: function() {
