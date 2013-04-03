@@ -141,7 +141,7 @@ var self = window.StyleFix = {
 	},
 	
 	fix: function(css, raw, element) {
-		for(var i=0; i<self.fixers.length; i++) {
+		for(var i=0; self.fixers && i<self.fixers.length; i++) {
 			css = self.fixers[i](css, raw, element) || css;
 		}
 		
@@ -161,11 +161,9 @@ var self = window.StyleFix = {
  * Process styles
  **************************************/
 (function(){
-	setTimeout(function(){
-		$('link[rel="stylesheet"]').forEach(StyleFix.link);
-	}, 10);
-	
-	document.addEventListener('DOMContentLoaded', StyleFix.process, false);
+	document.readyState == 'loading'
+		? document.addEventListener('DOMContentLoaded', StyleFix.process, false)
+		: setTimeout(StyleFix.process, 0);
 })();
 
 function $(expr, con) {
