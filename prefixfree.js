@@ -254,7 +254,34 @@ var self = window.PrefixFree = {
 		var prefixed = self.prefix + property;
 		
 		return camelCase? StyleFix.camelCase(prefixed) : prefixed;
-	}
+	},
+
+    // tries to get the a supported event from a W3C event name
+    eventName : {
+        get:function(eventName) {
+
+            var prefix = PrefixFree.Prefix.toLowerCase(),
+                prefixEventName = prefix + eventName ,
+                eventNameCamelCase = self.eventName.toCamelCase(eventName),
+                i = 0;
+
+            if ('on'+eventName in window){
+                return eventName;
+            }
+            if ('on'+prefixEventName in window){
+                return prefix + eventNameCamelCase;
+            }
+            return eventName;
+
+        },
+        toCamelCase:function(eventName){
+            var str = eventName.charAt(0).toLocaleUpperCase() + eventName.substring(1);
+            str = str.replace('end','End')
+                .replace('iteration','Iteration')
+                .replace('start','Start');
+            return str;
+        }
+    }
 };
 
 /**************************************
