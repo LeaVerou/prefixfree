@@ -1,7 +1,14 @@
 /**
- * Adds support for getting vendor prefixed animation event names
+ * Adds support for getting vendor prefixed animation event names from the W3C event name,
+ * e.g. transitionstart, animationiteration etc...
+ *
  * Requires PrefixFree
  * @author Patrick Clancey
+ * @memberOf PrefixFree
+ *
+ */
+
+/**
  *
  * Usage example (assuming webkit);
  *
@@ -12,10 +19,10 @@
  */
 
 
-(function(window, self){
+(function(self, window){
 "use strict";
 
-    if(!self) {
+    if(!self || !window) {
         return;
     }
 
@@ -24,15 +31,13 @@
         get:function(eventName) {
 
             var prefix = PrefixFree.Prefix.toLowerCase(),
-                prefixEventName = prefix + eventName ,
-                eventNameCamelCase = self.eventName.toCamelCase(eventName),
-                i = 0;
+                prefixEventName = prefix + eventName ;
 
             if ('on'+eventName in window){
                 return eventName;
             }
             if ('on'+prefixEventName in window){
-                return prefix + eventNameCamelCase;
+                return prefix + self.eventName.toCamelCase(eventName);
             }
             return eventName;
 
@@ -46,4 +51,4 @@
         }
     }
 
-})(window, window.PrefixFree);
+})(window.PrefixFree, window);
