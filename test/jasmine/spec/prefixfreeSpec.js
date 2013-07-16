@@ -67,6 +67,7 @@ describe("StyleFix core", function(){
         link.setAttribute('rel','stylesheet');
         link.setAttribute('href','test.css');
         link.setAttribute('id','mytest01');
+        link.onload = function(){ window.mytest01 = true;};
         document.getElementsByTagName('head')[0].appendChild( link );
 
         runs(function () {
@@ -74,7 +75,10 @@ describe("StyleFix core", function(){
             StyleFix.link(link);
         });
 
-        waits(500);
+        // waits(1500);
+        waitsFor(function() {
+            return !!document.querySelector("style[data-href='test.css']") ;
+        }, "CSS to process", 5000);
 
         runs(function () {
             expect( document.querySelector("style[data-href='test.css']") ).not.toBeNull();
@@ -95,7 +99,10 @@ describe("StyleFix core", function(){
             StyleFix.link(link);
         });
 
-        waits(500);
+        //waits(1500);
+        waitsFor(function() {
+            return !document.getElementById('mytest02') ;
+        }, "CSS to process", 5000);
 
         runs(function () {
             expect( document.getElementById('mytest02') ).toBeNull();
