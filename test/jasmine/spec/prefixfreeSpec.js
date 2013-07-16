@@ -7,12 +7,14 @@ describe("PrefixFree core", function(){
     describe("When prefixing css", function() {
 
         it("property; it should prefix any property not in the properties array", function() {
-            expect( PrefixFree.property( 'i-dont-exist' )).not.toBe( 'i-dont-exist' );
+            var prefix = PrefixFree.prefix;
+            expect( PrefixFree.property( 'i-dont-exist' )).toBe( prefix+ 'i-dont-exist' );
         });
 
         it("property; it should prefix all properties in the properties array, except the first one??", function() {
+            var prefix = PrefixFree.prefix;
             expect( PrefixFree.property( PrefixFree.properties[0] )).toBe( PrefixFree.properties[0] );
-            expect( PrefixFree.property( PrefixFree.properties[1] )).not.toBe( PrefixFree.properties[1] );
+            expect( PrefixFree.property( PrefixFree.properties[1] )).toBe( prefix + PrefixFree.properties[1] );
         });
 
         it("value; it should return a prefix version of the value", function() {
