@@ -238,9 +238,11 @@ var self = window.PrefixFree = {
 	value: function(value, property) {
 		value = fix('functions', '(^|\\s|,)', '\\s*\\(', '$1' + self.prefix + '$2(', value);
 		value = fix('keywords', '(^|\\s)', '(\\s|$)', '$1' + self.prefix + '$2$3', value);
-		
-		// TODO properties inside values
-		
+
+		if(self.valueProperties.indexOf(property) >= 0) {
+			value = fix('properties', '(^|\\s|,)', '($|\\s|,)', '$1'+self.prefix+'$2$3', value);
+		}
+
 		return value;
 	},
 	
