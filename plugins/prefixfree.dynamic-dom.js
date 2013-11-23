@@ -51,46 +51,53 @@ if(!self) {
 }
 
 // Add accessors for CSSOM property changes
-if(window.CSSStyleDeclaration) {
-	for(var i=0; i<self.properties.length; i++) {
-		var property = StyleFix.camelCase(self.properties[i]),
-		    prefixed = self.prefixProperty(property, true),
-		    proto = CSSStyleDeclaration.prototype,
-		    getter,
-		    setter;
 
-		// Lowercase prefix for IE
-		if(!(prefixed in proto)) {
-			prefixed = prefixed.charAt(0).toLowerCase() + prefixed.slice(1);
-			if(!(prefixed in proto)) {
-				continue;
-			}
-		}
+var style = document.documentElement.style,
+    proto = style.constructor.prototype;
 
-		getter = (function(prefixed) {
-			return function() {
-				return this[prefixed];
-			}
-		})(prefixed);
-		setter = (function(prefixed) {
-			return function(value) {
-				this[prefixed] = value;
-			}
-		})(prefixed);
-
-		if(Object.defineProperty) {
-			Object.defineProperty(proto, property, {
-				get: getter,
-				set: setter,
-				enumerable: true,
-				configurable: true
-			});
-		}
-		else if(proto.__defineGetter__) {
-			proto.__defineGetter__(property, getter);
-			proto.__defineSetter__(property, setter);
-		}
-	}
+while (style !== Object.prototype && !style.hasOwnProperty("color")){
+    style = style.constructor.prototype;
 }
+
+var properties = Object.getOwnPropertyNames(style),
+    prefixRE = new RegExp("^["+self.Prefix.charAt(0).toLowerCase()+self.Prefix.replace(/(^.)/,"$1]")+"([A-Z])(.*)");
+
+var i=0,
+    property="",
+    unprefixed="",
+    match;
+
+while (i < properties.length){
+    property = properties[i++];
+    match = property.match(prefixRE);
+
+if (!match || style.hasOwnProperty(unprefixed = match[1].toLowerCase() + match[2])){
+    continue;
+}
+
+var getter = function(property){
+	return function(){
+		return this[property];
+		}
+}
+
+var setter = function(property){
+	return function(value){
+		this[property] = value;
+		}
+}
+
+if (Object.defineProperty) {
+	Object.defineProperty(proto, unprefixed, {
+		get: getter(property),
+		set: setter(property),
+		enumerable: true,
+		configurable: true
+	});
+} else if(proto.__defineGetter__) {
+		proto.__defineGetter__(property, getter(property));
+		proto.__defineSetter__(property, setter(property));
+	}
+};
 
 })(window.PrefixFree);
