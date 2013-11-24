@@ -67,14 +67,6 @@ var i=0,
     unprefixed="",
     match;
 
-while (i < properties.length){
-    property = properties[i++];
-    match = property.match(prefixRE);
-
-if (!match || style.hasOwnProperty(unprefixed = match[1].toLowerCase() + match[2])){
-    continue;
-}
-
 var getter = function(property){
 	return function(){
 		return this[property];
@@ -86,6 +78,15 @@ var setter = function(property){
 		this[property] = value;
 		}
 }
+
+while (i < properties.length){
+    property = properties[i++];
+    match = property.match(prefixRE);
+
+if (!match || style.hasOwnProperty(unprefixed = match[1].toLowerCase() + match[2])){
+    continue;
+}
+
 
 if (Object.defineProperty) {
 	Object.defineProperty(proto, unprefixed, {
