@@ -95,8 +95,8 @@ if (Object.defineProperty) {
 		configurable: true
 	});
 } else if(proto.__defineGetter__) {
-		proto.__defineGetter__(property, getter(property));
-		proto.__defineSetter__(property, setter(property));
+		proto.__defineGetter__(unprefixed, getter(property));
+		proto.__defineSetter__(unprefixed, setter(property));
 	}
 };
 
