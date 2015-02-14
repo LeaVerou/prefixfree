@@ -25,7 +25,7 @@ if(!units.length) {
 StyleFix.register(function(css) {
 	var w = innerWidth, h = innerHeight;
 	
-	return css.replace(RegExp('\\b(\\d+\\.?\\d*)(' + units.join('|') + ')\\b', 'gi'), function($0, num, unit) {
+	return css.replace(RegExp('\\b(\\d*\\.?\\d+)(' + units.join('|') + ')\\b', 'gi'), function($0, num, unit) {
 		switch (unit) {
 			case 'vw':
 				return num * w / 100 + 'px';
