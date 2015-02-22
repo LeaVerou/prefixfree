@@ -84,19 +84,22 @@ var self = window.StyleFix = {
 				}
 		};
 
-		try {
-			xhr.open('GET', url);
-			xhr.send(null);
-		} catch (e) {
-			// Fallback to XDomainRequest if available
-			if (typeof XDomainRequest != "undefined") {
-				xhr = new XDomainRequest();
-				xhr.onerror = xhr.onprogress = function() {};
-				xhr.onload = process;
-				xhr.open("GET", url);
-				xhr.send(null);
-			}
-		}
+        // xhr will fail on local files anyway, so don't even try
+        if (base_scheme !== "file:") {
+            try {
+                xhr.open('GET', url);
+                xhr.send(null);
+            } catch (e) {
+                // Fallback to XDomainRequest if available
+                if (typeof XDomainRequest != "undefined") {
+                    xhr = new XDomainRequest();
+                    xhr.onerror = xhr.onprogress = function() {};
+                    xhr.onload = process;
+                    xhr.open("GET", url);
+                    xhr.send(null);
+                }
+            }
+        }
 		
 		link.setAttribute('data-inprogress', '');
 	},
