@@ -48,12 +48,15 @@ StyleFix.register(function(css) {
 
 var styleFixResizeTimer;
 
-window.addEventListener('resize', function () {
+var resizeListener = function () {
 	// 100ms interruptable delay because the computation is expensive
 	if (typeof styleFixResizeTimer !== 'undefined') clearTimeout(styleFixResizeTimer);
 	styleFixResizeTimer = setTimeout(function () {
 		StyleFix.process();
 	}, 100);
-}, false);
+};
+
+window.addEventListener('resize', resizeListener, false);
+window.addEventListener('orientationchange', resizeListener, false);
 
 })();
