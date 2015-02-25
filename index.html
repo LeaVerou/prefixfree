@@ -208,17 +208,14 @@
 		<p>A static polyfill for the new <a href="http://www.w3.org/TR/css3-values/#viewport-relative-lengths">vw, vh, vmin, vmax units</a>.</p>
 		<ul class="features">
 			<li>Will do nothing if the units are supported natively.</li>
-		</ul>
-		Limitations:
-		<ul class="drawbacks">
-			<li>It’s not dynamic. The lengths are replaced once, and then they function as normal CSS pixel values. So, they won’t update when the window is resized, but only on load.</li>
+			<li>It’s dynamic. Pixel values are updated on screen resize.</li>
 		</ul>
 		<ul>
 			<li><a href="https://raw.github.com/LeaVerou/prefixfree/gh-pages/plugins/prefixfree.viewport-units.js">prefixfree.viewport-units.js</a></li>
 		</ul>
 	</section>
 	
-	<section id="viewport-units">
+	<section id="css-variables">
 		<h1>CSS Variables</h1>
 		<p>Enables rudimentary <a href="http://www.w3.org/TR/css-variables/">CSS variables</a> support.</p>
 		<ul class="features">
