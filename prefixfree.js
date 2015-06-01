@@ -390,7 +390,10 @@ var keywords = {
 	'inline-flex': 'display',
 	'grid': 'display',
 	'inline-grid': 'display',
-	'min-content': 'width'
+	'max-content': 'width',
+	'min-content': 'width',
+	'fit-content': 'width',
+	'fill-available': 'width'
 };
 
 self.functions = [];
