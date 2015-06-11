@@ -1,6 +1,5 @@
 {
   "name": "prefixfree",
-  "version": "1.0.7",
   "main": "prefixfree.min.js",
    "author": {
     "name": "Lea Verou"
