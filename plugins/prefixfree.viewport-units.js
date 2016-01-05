@@ -24,19 +24,39 @@ if(!units.length) {
 
 StyleFix.register(function(css) {
 	var w = innerWidth, h = innerHeight;
-	
-	return css.replace(RegExp('\\b(\\d+\\.?\\d*)(' + units.join('|') + ')\\b', 'gi'), function($0, num, unit) {
+	// For help with this monster regex: see debuggex.com: https://www.debuggex.com/r/cpzpAHiWPagP3Zru
+	return css.replace(RegExp('(-?[a-z]+(?:-[a-z]+)*\\s*:\\s*)\\b([0-9]*\\.?[0-9]+)(' + units.join('|') + ')\\b(?:\\s*;\\s*\\1\\b(?:[0-9]*\\.?[0-9]+)(?:px)\\b)?;?', 'gi'), function($0, property, num, unit) {
+		if (!unit) return $0;
+		var value;
 		switch (unit) {
 			case 'vw':
-				return num * w / 100 + 'px';
+				value = num * w / 100 + 'px';
+				break;
 			case 'vh':
-				return num * h / 100 + 'px';
+				value = num * h / 100 + 'px';
+				break;
 			case 'vmin':
-				return num * Math.min(w,h) / 100 + 'px';
+				value = num * Math.min(w,h) / 100 + 'px';
+				break;
 			case 'vmax':
-				return num * Math.max(w,h) / 100 + 'px';
+				value = num * Math.max(w,h) / 100 + 'px';
+				break;
 		}
+		return property + num + unit + ';' + property + value + ';';
 	});
 });
+
+var styleFixResizeTimer;
+
+var resizeListener = function () {
+	// 100ms interruptable delay because the computation is expensive
+	if (typeof styleFixResizeTimer !== 'undefined') clearTimeout(styleFixResizeTimer);
+	styleFixResizeTimer = setTimeout(function () {
+		StyleFix.process();
+	}, 100);
+};
+
+window.addEventListener('resize', resizeListener, false);
+window.addEventListener('orientationchange', resizeListener, false);
 
 })();
