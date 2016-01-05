@@ -44,7 +44,7 @@ var self = window.StyleFix = {
 					css = self.fix(css, true, link);
 					
 					// Convert relative URLs to absolute, if needed
-					if(base) {
+					if(css && base) {
 						css = css.replace(/url\(\s*?((?:"|')?)(.+?)\1\s*?\)/gi, function($0, quote, url) {
 							if(/^([a-z]{3,10}:|#)/i.test(url)) { // Absolute & or hash-relative
 								return $0;
@@ -137,8 +137,10 @@ var self = window.StyleFix = {
 	},
 	
 	fix: function(css, raw, element) {
-		for(var i=0; i<self.fixers.length; i++) {
+		if(self.fixers) {
+		  for(var i=0; i<self.fixers.length; i++) {
 			css = self.fixers[i](css, raw, element) || css;
+		  }
 		}
 		
 		return css;
@@ -297,7 +299,7 @@ var self = window.PrefixFree = {
 	}
 	
 	// Some browsers have numerical indices for the properties, some don't
-	if(style.length > 0) {
+	if(style && style.length > 0) {
 		for(var i=0; i<style.length; i++) {
 			iterate(style[i])
 		}
