@@ -273,7 +273,11 @@ var self = window.PrefixFree = {
 		style = getComputedStyle(document.documentElement, null),
 		dummy = document.createElement('div').style;
 	
-	// Why are we doing this instead of iterating over properties in a .style object? Cause Webkit won't iterate over those.
+	// Why are we doing this instead of iterating over properties in a .style object? Because Webkit.
+	// 1. Older Webkit won't iterate over those.
+	// 2. Recent Webkit will, but the 'Webkit'-prefixed properties are not enumerable. The 'webkit'
+	//    (lower case 'w') ones are, but they don't `deCamelCase()` into a prefix that we can detect.
+
 	var iterate = function(property) {
 		if(property.charAt(0) === '-') {
 			properties.push(property);
