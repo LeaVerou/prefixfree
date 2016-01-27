@@ -12,9 +12,10 @@ if(!window.addEventListener) {
 
 var self = window.StyleFix = {
 	link: function(link) {
+		var url = link.href || link.getAttribute('data-href');
 		try {
-			// Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets
-			if(link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')) {
+			// Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets or without (data-)href attribute
+			if(!url || link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')) {
 				return;
 			}
 		}
@@ -22,8 +23,7 @@ var self = window.StyleFix = {
 			return;
 		}
 
-		var url = link.href || link.getAttribute('data-href'),
-		    base = url.replace(/[^\/]+$/, ''),
+		var base = url.replace(/[^\/]+$/, ''),
 		    base_scheme = (/^[a-z]{3,10}:/.exec(base) || [''])[0],
 		    base_domain = (/^[a-z]{3,10}:\/\/[^\/]+/.exec(base) || [''])[0],
 		    base_query = /^([^?]*)\??/.exec(url)[1],
