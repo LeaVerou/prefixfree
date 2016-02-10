@@ -72,7 +72,7 @@ var self = window.StyleFix = {
 						}
 					
 					var style = document.createElement('style');
-					style.textContent = css;
+					style.textContent = '/*# sourceURL='+link.getAttribute('href')+' */\n/*@ sourceURL='+link.getAttribute('href')+' */\n' + css;
 					style.media = link.media;
 					style.disabled = link.disabled;
 					style.setAttribute('data-href', link.getAttribute('href'));
