@@ -493,7 +493,8 @@ root.removeChild(style);
 // Properties that accept properties as their value
 self.valueProperties = [
 	'transition',
-	'transition-property'
+	'transition-property',
+	'will-change'
 ]
 
 // Add class for current prefix
