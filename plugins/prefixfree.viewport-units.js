@@ -24,26 +24,32 @@ if(!units.length) {
 
 StyleFix.register(function(css) {
 	var w = innerWidth, h = innerHeight;
-	// For help with this monster regex: see debuggex.com: https://www.debuggex.com/r/cpzpAHiWPagP3Zru
-	return css.replace(RegExp('(-?[a-z]+(?:-[a-z]+)*\\s*:\\s*)\\b([0-9]*\\.?[0-9]+)(' + units.join('|') + ')\\b(?:\\s*;\\s*\\1\\b(?:[0-9]*\\.?[0-9]+)(?:px)\\b)?;?', 'gi'), function($0, property, num, unit) {
-		if (!unit) return $0;
-		var value;
-		switch (unit) {
-			case 'vw':
-				value = num * w / 100 + 'px';
-				break;
-			case 'vh':
-				value = num * h / 100 + 'px';
-				break;
-			case 'vmin':
-				value = num * Math.min(w,h) / 100 + 'px';
-				break;
-			case 'vmax':
-				value = num * Math.max(w,h) / 100 + 'px';
-				break;
-		}
-		return property + num + unit + ';' + property + value + ';';
-	});
+	return css
+	    // Strip out comments that include viewport units. [\w\W] matches any char including new lines; equiv to (?:.|\n).
+			// More help: https://www.debuggex.com/r/SkAo6MSzOJjQ-UMK
+			.replace(RegExp('\/\*(?!<)[\w\W]*?\d\s*(' + units.join('|') + ')([\w\W]*?(?!>)[\w\W])?\*\/', 'gi'), '')
+			// For help with this monster regex: https://www.debuggex.com/r/IJ5stKswd3W_Au-v
+			.replace(
+					RegExp('(?:\/\*<)?(-?\d*\.?\d+)\s*(' + units.join('|') + ')\b(?:>\*\/-?\d*\.?\d+px)?', 'gi'),
+					function (match, num, unit) {
+						var factor;
+						switch (unit) {
+							case 'vw':
+								factor = w;
+								break;
+							case 'vh':
+								factor = h;
+								break;
+							case 'vmin':
+								factor = Math.min(w, h);
+								break;
+							case 'vmax':
+								factor = Math.max(w, h);
+								break;
+						}
+						return '/*<' + num + unit + '>*/' + (num * factor / 100) + 'px';
+					}
+	);
 });
 
 var styleFixResizeTimer;
