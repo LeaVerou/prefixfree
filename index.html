@@ -76,6 +76,10 @@
 	<h1>How to use</h1>
 	<p>Just include <code>prefixfree.js</code> anywhere in your page. It is recommended to put it right after the stylesheets, to minimize <abbr title="Flash Of UnCSS3-ed Content">FOUC</abbr>
 	<p>That’s it, you’re done!</p>
+	<p>You can also use <code>prefixfree.js</code> via 
+		<a href="https://github.com/component/component">component</a>. 
+		<a href="#faq">learn more</a>
+	</p>
 </section>
 </div>
 
@@ -123,8 +127,23 @@
 
 
 <section id="faq" class="page">
+
 	<h1>FAQ</h1>
-	
+	<section>
+	<h1>Can I use it via
+		<a href="https://github.com/component/component">Component</a>?
+	</h1>
+	<p>
+		Sure thing. You can use prefixfree via component by add adding this into your
+		<code>component.json</code>
+	</p>
+	<pre>
+"dependencies": { "LeaVerou/prefixfree@gh-pages": "*" } </pre>
+	<p>Then activate prefixfree by:</p>
+	<pre>
+require('LeaVerou/prefixfree/prefixfree.js')(document.documentElement); 
+	</pre>
+	</section>
 	<section>
 		<h1>What if I actually want to target only a specific prefix?</h1>
 		<p>Properties/values etc that <strong>already</strong> have a prefix won’t be altered. However, if you use the unprefixed property/value etc after the prefixed properties, you might run into <a href="https://github.com/LeaVerou/prefixfree/issues/16#issuecomment-2428237" target="_blank">issue #16</a>.

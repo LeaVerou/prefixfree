@@ -1,0 +1,13 @@
+{
+  "name": "prefixfree",
+  "repo": "LeaVerou/prefixfree",
+  "description": "Break free from CSS prefix hell!",
+  "version": "1.0.7",
+  "keywords": [],
+  "dependencies": {},
+  "development": {},
+  "license": "MIT",
+  "scripts": [
+    "prefixfree.js"
+  ]
+}

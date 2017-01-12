@@ -66,3 +66,15 @@ Prefixes the properties and values in the code passed with the prefix of the cur
 	PrefixFree.prefixSelector(selector)
 	PrefixFree.prefixProperty(property)
 Prefixes the passed selector or property **even when it's supported prefix-less**. These are more internal methods and I assume they won't be too useful in general.
+
+## Using via [Component](https://github.com/component/component)
+
+[Component](https://github.com/component/component) is an excellent package manager. You can use prefixfree via component by add adding this into your `component.json`
+		
+	  "dependencies": {
+	    "LeaVerou/prefixfree@gh-pages": "*"
+	  }
+
+Then activate prefixfree by:
+		
+		require('LeaVerou/prefixfree/prefixfree.js')(document.documentElement);

@@ -157,17 +157,6 @@ var self = window.StyleFix = {
 	}
 };
 
-/**************************************
- * Process styles
- **************************************/
-(function(){
-	setTimeout(function(){
-		$('link[rel="stylesheet"]').forEach(StyleFix.link);
-	}, 10);
-	
-	document.addEventListener('DOMContentLoaded', StyleFix.process, false);
-})();
-
 function $(expr, con) {
 	return [].slice.call((con || document).querySelectorAll(expr));
 }
@@ -177,7 +166,13 @@ function $(expr, con) {
 /**
  * PrefixFree
  */
-(function(root){
+(function(prefixFree){
+	if(typeof(module)=='undefined'){
+		prefixFree(document.documentElement);
+	}else{
+		module.exports = prefixFree;
+	}
+})(function(root){
 
 if(!window.StyleFix || !window.getComputedStyle) {
 	return;
@@ -502,5 +497,18 @@ root.className += ' ' + self.prefix;
 
 StyleFix.register(self.prefixCSS);
 
+/**************************************
+ * Process styles
+ **************************************/
 
-})(document.documentElement);
+setTimeout(function(){
+	$('link[rel="stylesheet"]').forEach(StyleFix.link);
+}, 10);
+
+function $(expr, con) {
+	return [].slice.call((con || document).querySelectorAll(expr));
+}
+
+document.addEventListener('DOMContentLoaded', StyleFix.process, false);
+
+});
