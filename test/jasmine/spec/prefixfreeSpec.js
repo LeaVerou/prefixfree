@@ -6,15 +6,16 @@ describe("PrefixFree core", function(){
 
     describe("When prefixing css", function() {
 
-        it("property; it should prefix any property not in the properties array", function() {
+        it("property; it should not prefix any property not in the properties array", function() {
             var prefix = PrefixFree.prefix;
-            expect( PrefixFree.property( 'i-dont-exist' )).toBe( prefix+ 'i-dont-exist' );
+            expect( PrefixFree.property( 'i-dont-exist' )).toBe( 'i-dont-exist' );
         });
 
-        it("property; it should prefix all properties in the properties array, except the first one??", function() {
+        it("property; it should prefix all properties in the properties array", function() {
             var prefix = PrefixFree.prefix;
-            expect( PrefixFree.property( PrefixFree.properties[0] )).toBe( PrefixFree.properties[0] );
-            expect( PrefixFree.property( PrefixFree.properties[1] )).toBe( prefix + PrefixFree.properties[1] );
+            for (var i = 0; i < PrefixFree.properties.length; i++) {
+                expect( PrefixFree.property( PrefixFree.properties[i] )).toBe( prefix + PrefixFree.properties[i] );
+            }
         });
 
         it("value; it should return a prefix version of the value", function() {
@@ -22,10 +23,13 @@ describe("PrefixFree core", function(){
             expect( PrefixFree.value( PrefixFree.keywords[0] ) ).toBe( prefix + PrefixFree.keywords[0] );
         });
 
-        it("prefixSelector; will always prefix pseudo-elements", function(){
+        it("prefixSelector; will only prefix pseudo-elements when required", function(){
             var prefix = PrefixFree.prefix;
-            expect( PrefixFree.prefixSelector(':first-child') ).toBe( ':'+ prefix +'first-child');
-            expect( PrefixFree.prefixSelector('::before') ).toBe( '::'+ prefix +'before');
+            expect( PrefixFree.prefixSelector(':first-child') ).toBe( ':first-child' );
+            expect( PrefixFree.prefixSelector('::before') ).toBe( '::before');
+            for (var i = 0; i < PrefixFree.selectors.length; i++) {
+                expect( PrefixFree.prefixSelector(PrefixFree.selectors[i]) ).toBe(PrefixFree.selectorMap[PrefixFree.selectors[i]])
+            }
         });
 
         it("prefixCSS; will prefix css as necessary", function(){
