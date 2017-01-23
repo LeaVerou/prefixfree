@@ -361,6 +361,14 @@ var self = window.PrefixFree = {
 (function() {
 // Values that might need prefixing
 var functions = {
+	'canvas': {
+		property: 'backgroundImage',
+		params: 'test'
+	},
+	'image-set': {
+		property: 'backgroundImage',
+		params: 'url(a.png) 1x, url(b.png) 2x'
+	},
 	'linear-gradient': {
 		property: 'backgroundImage',
 		params: 'red, teal'
@@ -450,7 +458,11 @@ selectors = {
 	':read-only': null,
 	':read-write': null,
 	':any-link': null,
-	'::selection': null
+	':placeholder': null, // Firefox4-18
+	':input-placeholder': null, // IE10+
+	'::selection': null, // Firefox2+
+	'::placeholder': null, // Firefox19+
+	'::input-placeholder': null // WebKit
 },
 
 atrules = {
