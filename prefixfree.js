@@ -389,6 +389,8 @@ functions['linear-gradient'];
 // The keywords will be prefixed everywhere.
 var keywords = {
 	'initial': 'color',
+	'grab': 'cursor',
+	'grabbing': 'cursor',
 	'zoom-in': 'cursor',
 	'zoom-out': 'cursor',
 	'box': 'display',
@@ -401,7 +403,8 @@ var keywords = {
 	'max-content': 'width',
 	'min-content': 'width',
 	'fit-content': 'width',
-	'fill-available': 'width'
+	'fill-available': 'width',
+	'contain-floats': 'width'
 };
 
 self.functions = [];
