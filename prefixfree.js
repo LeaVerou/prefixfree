@@ -250,9 +250,8 @@ var self = window.PrefixFree = {
 		return value;
 	},
 	
-	// Warning: Prefixes no matter what, even if the selector is supported prefix-less
 	prefixSelector: function(selector) {
-		return selector.replace(/^:{1,2}/, function($0) { return $0 + self.prefix })
+		return self.selectorMap[selector] || selector
 	},
 	
 	// Warning: Prefixes no matter what, even if the property is supported prefix-less
@@ -389,6 +388,8 @@ functions['linear-gradient'];
 // The keywords will be prefixed everywhere.
 var keywords = {
 	'initial': 'color',
+	'grab': 'cursor',
+	'grabbing': 'cursor',
 	'zoom-in': 'cursor',
 	'zoom-out': 'cursor',
 	'box': 'display',
@@ -401,7 +402,8 @@ var keywords = {
 	'max-content': 'width',
 	'min-content': 'width',
 	'fit-content': 'width',
-	'fill-available': 'width'
+	'fill-available': 'width',
+	'contain-floats': 'width'
 };
 
 self.functions = [];
@@ -447,9 +449,17 @@ for (var keyword in keywords) {
 
 var 
 selectors = {
+	':any-link': null,
+	'::backdrop': null,
+	':fullscreen': null,
+	':full-screen': ':fullscreen',
+	//sigh
+	'::placeholder': null,
+	':placeholder': '::placeholder',
+	'::input-placeholder': '::placeholder',
+	':input-placeholder': '::placeholder',
 	':read-only': null,
 	':read-write': null,
-	':any-link': null,
 	'::selection': null
 },
 
@@ -460,6 +470,7 @@ atrules = {
 };
 
 self.selectors = [];
+self.selectorMap = {};
 self.atrules = [];
 
 var style = root.appendChild(document.createElement('style'));
@@ -471,10 +482,11 @@ function supported(selector) {
 }
 
 for(var selector in selectors) {
-	var test = selector + (selectors[selector]? '(' + selectors[selector] + ')' : '');
-		
-	if(!supported(test) && supported(self.prefixSelector(test))) {
-		self.selectors.push(selector);
+	var standard = selectors[selector] || selector
+	var prefixed = selector.replace(/::?/, function($0) { return $0 + self.prefix })
+	if(!supported(standard) && supported(prefixed)) {
+		self.selectors.push(standard);
+		self.selectorMap[standard] = prefixed;
 	}
 }
 
