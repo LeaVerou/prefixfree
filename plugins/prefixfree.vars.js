@@ -23,21 +23,36 @@ if (dummy.background) { // Unprefixed support
 
 var vars = {};
 
+function varUsage($0, id, fallback) {
+	var extra = '',
+		found,left,right;
+	if (fallback) {
+		fallback = fallback.replace(/var\(\s*--([\w-]+)\s*(?:,(.*))?\)/gi, varUsage); // recursive
+		right = fallback.indexOf(')');
+		left = fallback.indexOf('(');
+		if ( right > -1 && ((right < left) || left == -1) ) {
+			found = fallback.match( /([^)]*)\)(.*)/ );
+			if ( found ) {
+				fallback = found[1];
+				extra = found[2] + ')';
+			}
+		}
+	}
+	else fallback = 'initial';
+	return (vars[id] || fallback) + extra;
+}	
+	
 StyleFix.register(function(css) {
-	// We need to handle get and set at the same time, to allow overwriting of the same variable later on
-	return css.replace(/(?:^|\{|\s|;)--(?:[\w-]+)\s*:\s*[^;}]+|(\s|:|,)var\s*\(\s*--([\w-]+)(?:\s*|,\s*)?([\w-]+)?\)/gi, function($0, before, id, fallback) {
-		var declaration = $0.match(/(^|\{|\s|;)--([\w-]+)\s*:\s*([^;}]+)/i);
-		
-		if (declaration) {
-			vars[declaration[2]] = declaration[3];
-		}
-		else {
-			// Usage
-			fallback = fallback ? fallback.replace('--','') : null;
-			return before + (vars[id] || vars[fallback] || fallback || 'initial');
-		}
+	// handle variable definitions
+	return css.replace(/(?:^|\{|\s|;)--([\w-]+)\s*:([^;}]+)/gi, function($0, before, id, value) {
+		vars[id] = value;
+		return $0;  // this keeps the original intact
 	});
-});
+}, 1); 	 // use a low index to get values before other changes
 
+StyleFix.register(function(css) {
+	// handle variable usage
+	return css.replace(/var\(\s*--([\w-]+)\s*(?:,(.*))?\)/gi, varUsage);
+}, 10);
 
 })();
