@@ -131,6 +131,11 @@ var self = window.StyleFix = {
 
 		// Inline styles
 		$('[style]').forEach(StyleFix.styleAttribute);
+		
+		var event = document.createEvent('Event');
+		event.initEvent('StyleFixProcessed', true, true);
+		document.dispatchEvent(event);
+
 	},
 
 	register: function(fixer, index) {
