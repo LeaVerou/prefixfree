@@ -23,21 +23,62 @@ if (dummy.background) { // Unprefixed support
 
 var vars = {};
 
-StyleFix.register(function(css) {
-	// We need to handle get and set at the same time, to allow overwriting of the same variable later on
-	return css.replace(/(?:^|\{|\s|;)--(?:[\w-]+)\s*:\s*[^;}]+|(\s|:|,)var\s*\(\s*--([\w-]+)(?:\s*|,\s*)?([\w-]+)?\)/gi, function($0, before, id, fallback) {
-		var declaration = $0.match(/(^|\{|\s|;)--([\w-]+)\s*:\s*([^;}]+)/i);
-		
-		if (declaration) {
-			vars[declaration[2]] = declaration[3];
+	varUsage = function($0, id, fallback) {
+		var extra = '',
+			found,left,right;
+		if (fallback) {
+			fallback = fallback.replace(/var\(\s*--([\w-]+)\s*(?:,(.*))?\)/gi, varUsage);
+			right = fallback.indexOf(')');
+			left = fallback.indexOf('(');
+			if ( right > -1 && ((right < left) || left == -1) ) {
+				found = fallback.match( /([^)]*)\)(.*)/ );
+				if ( found ) {
+					fallback = found[1];
+					extra = found[2] + ')';
+				}
+			}
 		}
-		else {
-			// Usage
-			fallback = fallback ? fallback.replace('--','') : null;
-			return before + (vars[id] || vars[fallback] || fallback || 'initial');
-		}
-	});
-});
+		else fallback = 'initial';
+		return (vars[id] || fallback) + extra;
+	},
 
+	varFix = function(css, raw, element) {
+		return css.replace(/var\(\s*--([\w-]+)\s*(?:,(.*))?\)/gi, varUsage) || css;
+	},
+
+	styleElement = function(style) {
+		if (style.hasAttribute('data-noprefix')) {
+			return;
+		}
+		var disabled = style.disabled;
+		style.textContent = varFix(style.textContent, true, style);
+		style.disabled = disabled;
+	},
+
+	styleAttribute = function(element) {
+		var css = element.getAttribute('style');
+		css = varFix(css, false, element);
+		element.setAttribute('style', css);
+	},
+
+	secondPass = function() {
+		// Inline stylesheets
+		$('style').forEach(styleElement);
+		// Inline styles
+		$('[style]').forEach(styleAttribute);
+	};
+
+StyleFix.register(function(css) {
+	return css.replace(/(?:^|\{|\s|;)--([\w-]+)\s*:([^;}]+)/gi, function($0, id, value) {
+		vars[id] = value;
+		return $0;  // this keeps the original intact
+	});
+}, 1);	 // use a low index to get values before other changes
+
+document.addEventListener('StyleFixProcessed', secondPass, false);
+
+function $(expr, con) {
+	return [].slice.call((con || document).querySelectorAll(expr));
+}
 
 })();
