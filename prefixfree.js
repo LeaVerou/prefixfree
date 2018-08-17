@@ -283,7 +283,7 @@ var self = window.PrefixFree = {
 	//    (lower case 'w') ones are, but they don't `deCamelCase()` into a prefix that we can detect.
 
 	var iterate = function(property) {
-		if(property.charAt(0) === '-') {
+		if(/^-[^-]/.test(property)) {
 			properties.push(property);
 
 			var parts = property.split('-'),
