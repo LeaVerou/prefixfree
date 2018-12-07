@@ -11,11 +11,14 @@ if(!window.addEventListener) {
 }
 
 var self = window.StyleFix = {
+	optIn: document.currentScript.hasAttribute("data-prefix"),
+
 	link: function(link) {
 		var url = link.href || link.getAttribute('data-href');
 		try {
 			// Ignore stylesheets with data-noprefix attribute as well as alternate stylesheets or without (data-)href attribute
-			if(!url || link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')) {
+			if(!url || link.rel !== 'stylesheet' || link.hasAttribute('data-noprefix')
+				|| (self.optIn && !link.hasAttribute('data-prefix')) ) {
 				return;
 			}
 		}
