@@ -467,9 +467,9 @@ selectors = {
 	':full-screen': ':fullscreen',
 	//sigh
 	'::placeholder': null,
-	':placeholder': '::placeholder',
+	':placeholder': ':placeholder-shown',
 	'::input-placeholder': '::placeholder',
-	':input-placeholder': '::placeholder',
+	':input-placeholder': ':placeholder-shown',
 	':read-only': null,
 	':read-write': null,
 	'::selection': null
