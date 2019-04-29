@@ -415,6 +415,8 @@ var keywords = {
 	'min-content': 'width',
 	'fit-content': 'width',
 	'fill-available': 'width',
+	'stretch': 'width',
+	'sticky': 'position',
 	'contain-floats': 'width'
 };
 
