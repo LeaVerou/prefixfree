@@ -196,7 +196,7 @@ function fix(what, before, after, replacement, css) {
 	what = self[what];
 
 	if(what.length) {
-		var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gim');
+		var regex = RegExp(before + '(' + what.join('|') + ')' + after, 'gi');
 
 		css = css.replace(regex, replacement);
 	}
@@ -222,9 +222,9 @@ var self = window.PrefixFree = {
 
 		// Prefix properties *inside* values (issue #8)
 		if (self.properties.length) {
-			var regex = RegExp('\\b(' + self.properties.join('|') + ')', 'gi');
+			var regex = RegExp('\\b(' + self.properties.join('|') + ')(?!:)', 'gi');
 
-			css = fix('valueProperties', '\\b', ':([^;}]+?)[;}]', function($0) {
+			css = fix('valueProperties', '\\b', '\\s*:([^;}]+?)[;}]', function($0) {
 				return $0.replace(regex, prefix + "$1")
 			}, css);
 		}
