@@ -461,7 +461,7 @@ for (var keyword in keywords) {
 
 var
 selectors = {
-	':any': ':matches',
+	':any': ':is',
 	':any-link': null,
 	'::backdrop': null,
 	':fullscreen': null,
@@ -498,7 +498,8 @@ var prefixed;
 for(var selector in selectors) {
 	var standard = selectors[selector] || selector
 	prefixed = selector.replace(/::?/, function($0) { return $0 + self.prefix });
-	if(!supported(standard) && (supported(prefixed) || supported(prefixed + '(a,p)') )) {
+	if((!supported(standard) && !supported(standard + '(a,p)')) && 
+	   (supported(prefixed) || supported(prefixed + '(a,p)') )) {
 		self.selectors.push(standard);
 		self.selectorMap[standard] = prefixed;
 	}
